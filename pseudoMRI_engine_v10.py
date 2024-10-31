@@ -58,13 +58,8 @@ args.which_mri_to_warp   = ['T1.mgz', 'brain.mgz'][:1] # 'all'
 #%% Run PseudoMRIGenerator_ver1
 meginpy.pseudoMRI.PseudoMRIGenerator_ver1(args.isotrak_file, args.template, args.templates_dir, args.fiducial_file, args.pseudo_subject, 
                                           args.pseudo_subjects_dir, isotrak_from=args.subject, dense_hsp=False, mirror_hsps=True, 
-                                          template_headsurf=template_headsurf, dense_surf=False, z_thres=0.02, 
-                                          destHSPsShiftInwrd=0.0015, Wreg_est=1e-10, Wreg_apply= 1e-10, wtol=1e-6,
-                                          warp_anatomy=True, which_mri=args.which_mri_to_warp, blocksize=500000, 
-                                          write2format=['.mgz'], 
-                                          n_jobs=n_jobs, toplot=True, toooplot=False, pyplot_fsize=12, 
-                                          save_pseudomri_plot=True, plot_zoom_in='10%', plot_nslice=16, plot_tol=3, 
-                                          plot_side_leave='25%', plot_lw=1.5, plot_titlecolor=(.8,.9,.2), plot_titlefsize=18, 
+                                          template_headsurf=template_headsurf, warp_anatomy=True, which_mri=args.which_mri_to_warp, 
+                                          write2format=['.mgz'], n_jobs=n_jobs, save_pseudomri_plot=True,  
                                           isotrak_reject_min_max=[2, 10], use_hpi=args.use_hpi, 
                                           show_good_hsps_idx=args.show_good_hsps_idx, rem_good_pts_idx=args.rem_good_pts_idx,
                                           nmax_Ctrl=args.nmax_Ctrl)
