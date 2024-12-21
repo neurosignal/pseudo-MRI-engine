@@ -13,7 +13,7 @@ Jaiswal, A., Nenonen, J., & Parkkonen, L., Pseudo-MRI engine for MRI-free
 electromagnetic source imaging. Submitted to Human Brain Mapping in Apr.
 2024.
 pseudo-MRI engine is a research tool intended for generating pseudo-MRI, 
-i.e., the subject-spectific segmented set of a template MRI. 
+i.e., the subject-spectific segmented set of a template MRI.
 """
 print(__doc__)
 import nimi; del nimi
