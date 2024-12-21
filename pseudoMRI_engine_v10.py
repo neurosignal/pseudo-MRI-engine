@@ -12,16 +12,12 @@ Using pseudo-MRI engine version 1.0
 Jaiswal, A., Nenonen, J., & Parkkonen, L., Pseudo-MRI engine for MRI-free
 electromagnetic source imaging. Submitted to Human Brain Mapping in Apr.
 2024.
-pseudo-MRI engine is a research tool intended for generating a FreeSurfer-segmented 
-set of subject-spectific MRI template. 
-The user can use it under a collaboration agreement with Megin/developer, but WITHOUT ANY WARRANTY.
-Using or sharing it fully or partially beyond the agreement MUST BE agreed with Megin/developer in prior.
-The users should use the tool at their own responsibility.
-version notes:
-    * first stable version
+pseudo-MRI engine is a research tool intended for generating pseudo-MRI, 
+i.e., the subject-spectific segmented set of a template MRI. 
 """
 print(__doc__)
 import nimi; del nimi
+
 #%% 1. Set subject and directories
 import argparse
 parser = argparse.ArgumentParser(description='pseudo-MRI engine')
