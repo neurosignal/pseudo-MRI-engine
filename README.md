@@ -15,6 +15,7 @@ cd pseudo-MRI-engine
 python setup.py install
 
 **How to use**
+conda activate <your environment>
 
 **In terminal**
 

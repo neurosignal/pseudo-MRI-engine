@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Mar 15 09:59:05 2022
-
 @author: Amit Jaiswal(1,2)
 1.MEGIN OY, Espoo, Finland 
 2.NBE, Aalto University, Espoo, Finland
@@ -12,11 +11,10 @@ Using pseudo-MRI engine version 1.0
 Jaiswal, A., Nenonen, J., & Parkkonen, L., Pseudo-MRI engine for MRI-free
 electromagnetic source imaging. Submitted to Human Brain Mapping in Apr.
 2024.
-pseudo-MRI engine is a research tool intended for generating pseudo-MRI, 
+The software is intended to generate pseudo-MRI, 
 i.e., the subject-spectific segmented set of a template MRI.
 """
 print(__doc__)
-import nimi; del nimi
 
 #%% 1. Set subject and directories
 import argparse
