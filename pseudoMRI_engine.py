@@ -18,43 +18,93 @@ print(__doc__)
 
 #%% 1. Set subject and directories
 import argparse
-parser = argparse.ArgumentParser(description='pseudo-MRI engine')
-parser.add_argument('-s',       '--subject',        default=None,  type=str,  help='subject name')
-parser.add_argument('-s',       '--template',       default=None,  type=str,  help='Template MRI name')
-parser.add_argument('-s',       '--template_dir',   default=None,  type=str,  help='Template MRI parent directory')
-parser.add_argument('-dig',     '--isotrakfile',    default=None,  type=str,  help='MEG file with isotrak information (default=None)')
-parser.add_argument('-trans',   '--trans_file',     default=None,  type=str,  help='Co-registration (sRAS-to-head) file (default=None)')
-parser.add_argument('--dense_hsp',          action='store_true',      help='densify HSP?')
-parser.add_argument('--show_good_hsps_idx', action='store_true',      help='show good hsps idices?')
-parser.add_argument('-v', '--verbose',      action='store_true',      help='verbose mode or not?')
-parser.add_argument('--nmax_Ctrl',          default=200,    type=int, help='Number of maximum control points.')
+parser = argparse.ArgumentParser(description='pseudo-MRI engine for MRI-free electromagnetic source imaging.')
+parser.add_argument('-p',       '--pseudo_MRI_name',    default=None,  type=str,  help='subject name')
+parser.add_argument('-pd',      '--pseudo_MRI_dir',     default=None,  type=str,  help='Parent directory for the pseudo-MRI folder (optional)')
+parser.add_argument('-dig',     '--headshape',          default=None,  type=str,  help='File with headshape digitization information')
+parser.add_argument('-t',       '--template_MRI_name',  default=None,  type=str,  help='Template MRI name')
+parser.add_argument('-td',      '--template_MRI_dir',   default=None,  type=str,  help='Parent directory of the template MRI folder')
+parser.add_argument('-fids',    '--fiducial_file',      default=None,  type=str,  help='Fiducial file of the template MRI')
+parser.add_argument('-paloc',   '--preauri_loc',        default=None,  type=str,  help='LPA/RPA location considered during the head digitization')
+parser.add_argument('-nctrl',   '--nmax_Ctrl',          default=300,   type=int,  help='Number of maximum control points.')
+parser.add_argument('-densify', '--dense_hsp',          action='store_true',      help='densify HSP?')
+parser.add_argument('-v',       '--verbose',            action='store_true',      help='verbose mode or not?')
+parser.add_argument('-o',       '--open_report',        action='store_true',      help='open report or not when completed?')
 args = parser.parse_args()
 
-# Load modules
-from mne.surface import read_surface
-import os
-import meginpy
-n_jobs = os.cpu_count()
-print("\nhostname \t= %s \n#cores \t\t= %d" % (os.uname().nodename, n_jobs))
-meginpy.utils.tic()
+#%%
+from configuration_file import check_set_input_config
+args  = check_set_input_config(args)
 
-#%% Generate pseudo MRI
-templ_surf_fname  = '%s/%s/bem/watershed/%s_outer_skin_surface'%(args.templates_dir, args.template, args.template)
-template_headsurf = read_surface(templ_surf_fname, return_dict=True)[2]
-template_headsurf['rr'] /= 1000  # covert to meter    
-template_headsurf['rr'] *= 0.975 # shrink inward to reduce mismatch (FIX it by checking the mean distance for points above fids) 
+#%% Load modules
+from os.path import join
+from os import makedirs
+from datetime import datetime
+from mne import Report
+from utils.meginpy.pseudoMRI import pseudomriengine
 
-args.use_hpi             = True
-args.show_good_hsps_idx  = False
-args.rem_good_pts_idx    = []
-args.which_mri_to_warp   = ['T1.mgz', 'brain.mgz'][:1] # 'all'
+#%% Set an HTML report
+report_dir  = join(args.pseudo_MRI_dir, args.pseudo_MRI_name, "report")
+makedirs(report_dir, exist_ok=True)
+date_str    = datetime.now().strftime("-%Y%m%d-%H%M")
+args.report      = Report(title=f'pseudo-MRI generation report for subject: {args.pseudo_MRI_name}')
+args.report_file = join(report_dir, f"pseudoMRI_report{date_str}.html")
+args.report.add_sys_info(title='Analysis platform Info.')
+args.report.add_html(args, title='All parameters', tags=('parameters',))
+args.report.save(fname=args.report_file, open_browser=False, 
+                 overwrite=True, sort_content=False, verbose=args.verbose)
 
-#%% Run PseudoMRIGenerator_ver1
-meginpy.pseudoMRI.PseudoMRIGenerator_ver1(args.isotrak_file, args.template, args.templates_dir, args.fiducial_file, args.pseudo_subject, 
-                                          args.pseudo_subjects_dir, isotrak_from=args.subject, dense_hsp=False, mirror_hsps=True, 
-                                          template_headsurf=template_headsurf, warp_anatomy=True, which_mri=args.which_mri_to_warp, 
-                                          write2format=['.mgz'], n_jobs=n_jobs, save_pseudomri_plot=True,  
-                                          isotrak_reject_min_max=[2, 10], use_hpi=args.use_hpi, 
-                                          show_good_hsps_idx=args.show_good_hsps_idx, rem_good_pts_idx=args.rem_good_pts_idx,
-                                          nmax_Ctrl=args.nmax_Ctrl)
-meginpy.utils.toc()
+#%% Run pseudomriengine
+pseudomriengine(args.pseudo_MRI_name, args.pseudo_MRI_dir, args.headshape, 
+                args.template_MRI_name, args.template_MRI_dir, args.fiducial_file, 
+                dense_hsp=args.dense_hsp, mirror_hsps=args.mirror_hsps, 
+                template_headsurf=args.template_headsurf, 
+                dense_surf=args.dense_surf,   z_thres=args.z_thres, n_jobs=args.n_jobs, 
+                destHSPsShiftInwrd=args.destHSPsShiftInwrd, Wreg_est=args.Wreg_est, 
+                Wreg_apply= args.Wreg_apply, wtol=args.wtol, warp_anatomy=args.warp_anatomy, 
+                which_mri=args.which_mri, blocksize=args.blocksize, write2format=args.write2format, 
+                toplot=args.toplot, toooplot=args.toooplot, pyplot_fsize=args.pyplot_fsize, 
+                save_pmri_plot=args.save_pmri_plot, plot_zoom_in=args.plot_zoom_in, 
+                plot_nslice=args.plot_nslice, plot_tol=args.plot_tol, 
+                plot_side_leave=args.plot_side_leave, plot_lw=args.plot_lw,  
+                plot_titlecolor=args.plot_titlecolor, plot_titlefsize=args.plot_titlefsize, 
+                dig_reject_min_max=args.dig_reject_min_max, 
+                use_hpi=args.use_hpi, show_good_hsps_idx=args.show_good_hsps_idx, 
+                rem_good_pts_idx=args.rem_good_pts_idx,  
+                nmax_Ctrl=args.nmax_Ctrl,
+                report=args.report, report_file=args.report_file)
+
+# args.dense_hsp         = False 
+# args.mirror_hsps       = True 
+# args.template_headsurf = 'outer_skin' 
+# args.dense_surf        = True 
+# args.z_thres           = 0.02 
+# args.destHSPsShiftInwrd= 0.0025 
+# args.Wreg_est     = 0.000005 
+# args.Wreg_apply   =  0.00005 
+# args.wtol         = 1e-06
+# args.warp_anatomy = True 
+# args.which_mri    = 'all' 
+# args.blocksize    = 500000 
+# args.write2format = ['.mgz'] 
+# args.n_jobs       = 1 
+# args.toplot       = True 
+# args.toooplot     = True 
+# args.pyplot_fsize = 12 
+# args.save_pseudomri_plot = True
+# args.plot_zoom_in = '12%' 
+# args.plot_nslice  = 16 
+# args.plot_tol     = 3 
+# args.plot_side_leave = '25%' 
+# args.plot_lw         = 1.5  
+# args.plot_titlecolor = (.8,.9,.2) 
+# args.plot_titlefsize = 18 
+# args.isotrak_reject_min_max = [2, 10] 
+# args.show_good_hsps_idx     = True 
+# args.use_hpi          = True 
+# args.rem_good_pts_idx = []  
+# args.nmax_Ctrl        =  150
+# args.report           = None 
+# args.report_file      = None
+    
+    
