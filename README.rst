@@ -105,33 +105,5 @@ Requirements
 - Other dependencies (see `requirements.txt`)
 
 
-Contributing
-============
-
-Contributions are welcome! If you have suggestions or find bugs, please open an issue or submit a pull request.
-
-
-Citing pseudo-MRI engine
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-When using the software package in a publication, please cite the following articles:
-
-.. code-block:: BiBTeX
-
-
-	@article{doi: XXXXXXXXXX,
-		author = {Jaiswal, A.,  Nenonen J., and Parkkonen, L.},
-		title = {Pseudo-MRI engine for MRI-free electromagnetic source imaging},
-		journal = {Human Brain Mapping},
-		volume = {xx},
-		number = {6},
-		pages = {xxxxxx},
-		year = {xxxx},
-		doi = {xxxxx},
-		URL = {xxxxx},
-		eprint = {xxxx}
-	}	
-
-
 
 
