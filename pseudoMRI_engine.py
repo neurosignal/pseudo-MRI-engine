@@ -63,7 +63,7 @@ args.report      = Report(title=f'pseudo-MRI generation report for subject: {arg
 args.report_file = join(report_dir, f"pseudoMRI_report{date_str}.html")
 args.report.add_sys_info(title='Analysis platform Info.')
 args.report.add_html(args, title='All parameters', tags=('parameters',))
-args.report.save(fname=args.report_file, open_browser=False, 
+args.report.save(fname=args.report_file, open_browser=True, 
                  overwrite=True, sort_content=False, verbose=args.verbose)
 
 #%% Run pseudomriengine
@@ -84,39 +84,7 @@ pseudomriengine(args.pseudo_MRI_name, args.pseudo_MRI_dir, args.headshape,
                 use_hpi=args.use_hpi, show_good_hsps_idx=args.show_good_hsps_idx, 
                 rem_good_pts_idx=args.rem_good_pts_idx,  
                 nmax_Ctrl=args.nmax_Ctrl,
-                report=args.report, report_file=args.report_file)
+                report=args.report, report_file=args.report_file, args=args)
 
-# args.dense_hsp         = False 
-# args.mirror_hsps       = True 
-# args.template_headsurf = 'outer_skin' 
-# args.dense_surf        = True 
-# args.z_thres           = 0.02 
-# args.destHSPsShiftInwrd= 0.0025 
-# args.Wreg_est     = 0.000005 
-# args.Wreg_apply   =  0.00005 
-# args.wtol         = 1e-06
-# args.warp_anatomy = True 
-# args.which_mri    = 'all' 
-# args.blocksize    = 500000 
-# args.write2format = ['.mgz'] 
-# args.n_jobs       = 1 
-# args.toplot       = True 
-# args.toooplot     = True 
-# args.pyplot_fsize = 12 
-# args.save_pseudomri_plot = True
-# args.plot_zoom_in = '12%' 
-# args.plot_nslice  = 16 
-# args.plot_tol     = 3 
-# args.plot_side_leave = '25%' 
-# args.plot_lw         = 1.5  
-# args.plot_titlecolor = (.8,.9,.2) 
-# args.plot_titlefsize = 18 
-# args.isotrak_reject_min_max = [2, 10] 
-# args.show_good_hsps_idx     = True 
-# args.use_hpi          = True 
-# args.rem_good_pts_idx = []  
-# args.nmax_Ctrl        =  150
-# args.report           = None 
-# args.report_file      = None
     
     

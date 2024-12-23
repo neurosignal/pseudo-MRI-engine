@@ -1,23 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Feb  5 18:33:36 2024
+Created on Sun Feb  5 18:33:36 2023
 
 @author: Amit Jaiswal, Megin Oy, Espoo, Finland  
         <amit.jaiswal@megin.fi> <amit.jaiswal@aalto.fi>
 USAGE:
 """
 import numpy as np
-from nibabel import load as nib_load
-# import sys
 import mne
 from matplotlib import pyplot as plt
-from matplotlib.font_manager import FontManager
-# import meginpy
-from mne.utils import logger, verbose, warn # check_fname
-from time import sleep
-from os.path import join, exists, dirname, islink, relpath                 # split, splitext, isfile
-from os import makedirs , getcwd,  chdir, symlink, remove, cpu_count, walk       # remove, mkdir, 
+from mne.utils import verbose, warn 
+from os.path import join, exists, dirname, relpath
+from os import makedirs,  walk      
 from mne.io.constants import FIFF
 from scipy.spatial import distance
 from mayavi.mlab import figure, points3d, orientation_axes, text3d, gcf, close, view
@@ -26,7 +21,7 @@ from copy import deepcopy
 from IsoScore import IsoScore
 from . import viz
 from . import utils
-from shutil import move, copyfile
+from shutil import  copyfile
 import fnmatch
 from glob import iglob
 import glob2
@@ -46,9 +41,6 @@ def find_closest_node_dist(node, nodes, multipy2dist=1): # function to find clos
     closest_node = nodes[closest_index]
     diff = np.sqrt(np.sum(np.square(node-closest_node))) * multipy2dist # multipy2dist is to convert the unit m,cm,mm etc
     return closest_node, closest_index, diff
-
-
-
 
 #===================================find and plot isotrack points ==========================================================
 @verbose
@@ -84,9 +76,6 @@ def find_plot_isotraks(headshape_file, fiducial_output_file=None, toplot=False, 
     if coord_frame=='meg' and 'dev_head_t' in info:
         for loc in (hpi_loc, ext_loc, car_loc):
             loc[:] = mne.transforms.apply_trans(mne.transforms.invert_transform(info['dev_head_t']), loc)
-    # elif coord_frame == 'mri':
-    #     for loc in (hpi_loc, ext_loc, car_loc):
-    #         loc[:] = mne.transforms.apply_trans(head_mri_t, loc)
     if len(car_loc) == len(ext_loc) == len(hpi_loc) == 0:
         warn('Digitization points not found. Cannot plot digitization.')
         return # check if it works
@@ -137,7 +126,6 @@ def get_ras_to_neuromag_trans_from_fiducial_file(fiducial_file):
 def get_fiducial_LNR(fiducial_file):
     fids_ras = mne.io.read_fiducials(fiducial_file)[0]
     labels = ['', 'LPA','Nasion','RPA']
-    # fids_LNR = np.vstack((fids_LNR, dict([d for d in fids_ras if d['ident'] == fiff_id][0].items())['r']))
     fids_LNR, fids_LNR_dict = np.empty((0,3)), dict()
     for fiff_id in [1,2,3]:
         for d in fids_ras:
@@ -194,11 +182,7 @@ def find_uniform_scaler_for_minimum_dist(points1, points2, n_iter=200, mode='dis
         for ii in range(n_iter):# decreasing multiplyer
             mult *=1.01
             dist_total.append(( points1_r - (deepcopy(points2_r)*mult)))
-            multipliers.append(mult)
-        # dist_total = np.array(np.abs(dist_total))
-        # mindist_idx = dist_total.argmin()
-        # mult_mindist = multipliers[mindist_idx]
-        
+            multipliers.append(mult)        
         dist_total = np.array(np.abs(dist_total)).T
         tstat_all, t_pvalue_all = [], [] 
         for ii in range(len(multipliers)):
@@ -211,7 +195,6 @@ def find_uniform_scaler_for_minimum_dist(points1, points2, n_iter=200, mode='dis
     
     return mult_mindist
         
-
 #%% Find good quality HSPs that are abobe a threshold point and not too far from the surface
 def find_good_HSPs(hpis_hsps, surf2warp, fiducial_file, above_thrs=0.02, min_rej_percent=2, max_rej_percent=10, 
                    toplot=False,show_good_hsps_idx=False, return_scene=False):
@@ -312,64 +295,34 @@ def shift_destCtrl_inward_to_maintain_realistic_scalp2hsp_dist(destCtrl, trans_r
     return destCtrl4
 
 #%%
-def bst_warp_transform(p, q, reg=1e-3, reg_mode=2, comment='', wtol=1e-06, return_reg=False):
-    # % INPUT:  
-    # %    - p : Landmarks in system 1 (srcPts) 
-    # %    - q : Landmarks in system 2 (destPts)
-    # % OUTPUT:
-    # %    - e : Warp energy
+def my_warp_transform(p, q, reg=1e-3, reg_mode=2, comment='', wtol=1e-06, return_reg=False):
     N = p.shape[0]
-    # px = np.matlib.repmat(p[:,0].reshape((p[:,0].shape[0], 1)), 1, N)
-    # py = np.matlib.repmat(p[:,1].reshape((p[:,1].shape[0], 1)), 1, N)
-    # pz = np.matlib.repmat(p[:,2].reshape((p[:,2].shape[0], 1)), 1, N)
     px = np.tile(p[:,0].reshape((p[:,0].shape[0], 1)), (1, N))
     py = np.tile(p[:,1].reshape((p[:,1].shape[0], 1)), (1, N))
     pz = np.tile(p[:,2].reshape((p[:,2].shape[0], 1)), (1, N))
     K = np.sqrt((px - px.T)**2 + (py - py.T)**2 + (pz - pz.T)**2)
     P = np.hstack(( p, np.ones((N,1)) ))
-    # L = [K P; P' zeros(4,4)];
     L = np.vstack([np.hstack([K, P]),
                    np.hstack([P.T, np.zeros((4, 4))])])
-    # D = [q - p; zeros(4,3)];
     D = np.concatenate((q - p, np.zeros((4, 3))), axis=0)
-    # warning off
-    # H = L \ D
-    # if np.linalg.cond(L) < 1/sys.float_info.epsilon: # modified on 17/11/2021
-    #     L += reg * np.eye(L.shape[0])
     if reg_mode==1:
         try:
-            H = linalg.solve(L,D, check_finite=True, assume_a='gen', transposed=False)
-            # This section was commented later on 07/04/2022 and added a while loop for reg_mode=2
-            # # if H.mean()>100000: # modified on 17/11/2021
-            # if any(H.flatten()>100000): # commented the above and inserted this on 07/04/2022
-            #     print('Note: it is a temporary check, please FIX it in better way')
-            #     L += reg * np.eye(L.shape[0])
-            #     H = linalg.solve(L,D, sym_pos=False, lower=False, overwrite_a=False, overwrite_b=False, debug=None, 
-            #                      check_finite=True, assume_a='gen', transposed=False)        
+            H = linalg.solve(L,D, check_finite=True, assume_a='gen', transposed=False)    
         except linalg.LinAlgError: 
             L += reg * np.eye(L.shape[0])
             H = linalg.solve(L,D, check_finite=True, assume_a='gen', transposed=False)
-            
-    else:  # ................. added on 07/04/2022          
-        # NOTE: FIX IT : can we run a while loop until any(H.flatten()>100000) is True by varying the reg value?? 
-        # something thik this
+    else:        
         try:
-            # commented on 27/08 due to scipy versuíon changes: 
-            # H = linalg.solve(L,D, sym_pos=False, debug=None, check_finite=True, assume_a='gen', transposed=False)
             H = linalg.solve(L,D, check_finite=True, assume_a='gen', transposed=False)
         except linalg.LinAlgError:
             print('Using regularization = %s'%reg)
             L += reg * np.eye(L.shape[0])
             H = linalg.solve(L,D, check_finite=True, assume_a='gen', transposed=False)
-        # while any(H.flatten()>100000):
         while any((np.dot(L, H) - D).flatten() >= wtol): # changed on 13/05/2022
             print('Using regularization = %s'%reg)
             L += reg * np.eye(L.shape[0])
             H = linalg.solve(L,D, check_finite=True, assume_a='gen', transposed=False)
             reg *= 10
-    # For a linear eqn. Ax=b, (or here LH=D), the solution H is correct if LH-D==0 or (np.dot(L, H) - D)==0; 
-    # OR, if a regularization has been used, LH-D must be less than 1e-06, i.e toterance 
-    # warning on
     if (np.isnan(H)).any():
         H = linalg.pinv(L) * D
     W = H[:N,:]
@@ -382,21 +335,15 @@ def bst_warp_transform(p, q, reg=1e-3, reg_mode=2, comment='', wtol=1e-06, retur
     else:
         return W, A, e
 
-#%% ===== WARP LANDMARKS: VECTORIZED =====
-# % Performs warp transformation with linear 3D RFB (see Ermer's Thesis)
-def bst_warp_lm(r, A, W, p):
-    # print('\n\n**Using pseudoMRI.bst_warp_lm() starts\n')
+#%% 
+def my_warp_lm(r, A, W, p):
     rw = np.dot(r, A[:3,:3])
     rw = rw + A[3,:]
     n_p = p.shape[0]
-    # U = np.sqrt( ((np.matlib.repmat(r[:,0].reshape((r[:,0].shape[0],1)), 1, n_p) - p[:,0].T) ** 2) + 
-    #              ((np.matlib.repmat(r[:,1].reshape((r[:,1].shape[0],1)), 1, n_p) - p[:,1].T) ** 2) +   
-    #              ((np.matlib.repmat(r[:,2].reshape((r[:,2].shape[0],1)), 1, n_p) - p[:,2].T) ** 2) )
     U = np.sqrt( ((np.tile(r[:,0].reshape((r[:,0].shape[0],1)), (1, n_p)) - p[:,0].T) ** 2) + 
                   ((np.tile(r[:,1].reshape((r[:,1].shape[0],1)), (1, n_p)) - p[:,1].T) ** 2) +   
                   ((np.tile(r[:,2].reshape((r[:,2].shape[0],1)), (1, n_p)) - p[:,2].T) ** 2) )    
     rw = rw + np.dot(U, W)   
-    # print('\n\n**Using pseudoMRI.bst_warp_lm() end\n')
     return rw
 
 #%% Add a line to configuration file
@@ -473,7 +420,7 @@ def write_mri_warping_config(subjects_dir_from, isotrak_fname, subject_from,
         return fname
     
 #%%
-def bst_get_SurfaceFile_v2(subjects_dir, subject, read_files=True, read_metadata=False):
+def my_get_SurfaceFile_v2(subjects_dir, subject, read_files=True, read_metadata=False):
     SurfaceFile_names = dict()
     for surf in ['/bem/%s-head.fif'%subject, '/bem/%s-head-dense.fif'%subject, '/bem/watershed/%s_inner_skull_surface'%subject, 
                  '/bem/watershed/%s_outer_skull_surface'%subject, '/bem/watershed/%s_outer_skin_surface'%subject, 
@@ -494,7 +441,6 @@ def bst_get_SurfaceFile_v2(subjects_dir, subject, read_files=True, read_metadata
             try:
                 surface_mesh = mne.surface.read_surface(surface_file, read_metadata=read_metadata, return_dict=True, 
                                                         file_format='auto', verbose=None)[2]
-                # surface_mesh.update(coord_frame=mne.io.constants.FIFF.FIFFV_COORD_MRI)
                 scaling_factor = 1000.
                 surface_mesh['rr'] /= scaling_factor # convert to m
             except ValueError as valuerr: # this is reading dense and meadium skin surface
@@ -502,23 +448,16 @@ def bst_get_SurfaceFile_v2(subjects_dir, subject, read_files=True, read_metadata
                 surface_mesh = mne.read_bem_surfaces(surface_file)[0]
                 scaling_factor = 1.
                 surface_mesh['rr'] /= scaling_factor
-                # if not transfile is None:
-                #     surface_mesh = mne.transform_surface_to(surface_mesh, 'head', mne.transforms.read_trans(transfile), copy=True) 
             Surfaces[surf]        = surface_mesh     
             Surface_scaling[surf] = scaling_factor
             del surf, scaling_factor, surface_mesh
     return SurfaceFile_names, Surfaces, Surface_scaling
 
 #%% warp anatomy----------------------------------------------------------------------
-# FIX IT: use Parallel to speedup the process by parallel processing
-# from joblib import Parallel, delayed
-# out = Parallel(n_jobs=2)(delayed(heavymethod)(i) for i in range(10)) 
-# @verbose
 def apply_warp_to_anatomy(srcPts, destPts, mridata, t1_fname=None, Torig=None, block_size=1000000, 
                           reg=0.00005, reg_mode=1, toplot_final=False, warped_surf=None, n_jobs=1, resample=False, 
                           rs_voxel_sizes=[.5,.5,.5]):
     """
-    Disc: Python version inspired by %% ====== WARP MRI ======== in bst_warp
     Parameters
     ----------
     srcPts : np.array Nx3
@@ -551,10 +490,8 @@ def apply_warp_to_anatomy(srcPts, destPts, mridata, t1_fname=None, Torig=None, b
     Torig_inv : TYPE
         DESCRIPTION.
     """
-    # read MRI data in .mgz format 
     if mridata is None or Torig is None:
         print('Reading T1 data from %s'%t1_fname)
-        # # t1_fname = '%s/%s/mri/orig/001.mgz'%(subjects_dir, subject)
         t1 = nib.load(t1_fname); print(t1)
         if resample:
             print('\nNote: Applying resampling....')
@@ -562,12 +499,7 @@ def apply_warp_to_anatomy(srcPts, destPts, mridata, t1_fname=None, Torig=None, b
             del t1
             t1  = t1_res
             print(t1)
-        # t1.orthoview()
         data = np.asarray(t1.dataobj)
-        # just to plot for checking...
-        # center_vox = (np.array(t1.shape) - 1) / 2.
-        # center_scanner_ras = nib.affines.apply_affine(t1.affine, center_vox)
-        # meginpy.viz.myMlabPoint3d(center_scanner_ras/1000, newfig=False, scale_factor=0.005, mode='cube')
     
         mgh = nib.MGHImage(t1.dataobj, t1.affine)
         vox2ras_tkr = mgh.header.get_vox2ras_tkr()
@@ -584,124 +516,52 @@ def apply_warp_to_anatomy(srcPts, destPts, mridata, t1_fname=None, Torig=None, b
         miscs = dict()
     print('\nData dimensions = %s'%str(data.shape))
     print('Using %d vox/it for warping, increasing block_size would fasten the process but requires more memory.'%block_size)
-    # convert to  voxel/anatomy coordsys
-    # srcPts_mr  = cs_convert(sMriSrc, 'scs', 'voxel', srcPts);
-    # destPts_mr = cs_convert(sMriSrc, 'scs', 'voxel', destPts);
     srcPts_vox  = mne.transforms.apply_trans(np.linalg.inv(Torig), srcPts*1000)
     destPts_vox = mne.transforms.apply_trans(np.linalg.inv(Torig), destPts*1000)
-
-    # fig.axes[0].tricontour(srcPts_vox[:, 2], srcPts_vox[:, 1], srcPts_vox[:, 0])
-    # fig.axes[0].tricontour(destPts_vox[:, 2], destPts_vox[:, 1], destPts_vox[:, 0], colors='r')
-
-    # % Compute warp transform in MR(vox) coordinates
-    W_vox, A_vox, e_vox, regWtransVox  = bst_warp_transform(srcPts_vox, destPts_vox, reg=reg, reg_mode=reg_mode, 
+    W_vox, A_vox, e_vox, regWtransVox  = my_warp_transform(srcPts_vox, destPts_vox, reg=reg, reg_mode=reg_mode, 
                                                             comment='Estimating Wtrans for vox..', return_reg=True)
-
-    # % Compute "inverse" warp transform in MR(vox) coordinates 
-    W_vox_inv, A_vox_inv, e_vox_inv, reginvWtransVox = bst_warp_transform(destPts_vox, srcPts_vox, reg=reg, reg_mode=reg_mode, 
+    W_vox_inv, A_vox_inv, e_vox_inv, reginvWtransVox = my_warp_transform(destPts_vox, srcPts_vox, reg=reg, reg_mode=reg_mode, 
                                                             comment='Estimating inv. Wtrans for vox..', return_reg=True)
-    
     miscs['e_vox']     = e_vox
     miscs['e_vox_inv'] = e_vox_inv
     miscs['regWtransVox'] = regWtransVox
     miscs['reginvWtransVox'] = reginvWtransVox
-    # data = deepcopy(mridata)
-    
     utils.tic()
     if len(data.shape) > 3:
         print('====> Omitting, not implemented for 4D data.')
         newCube = None
     else: 
-        # % Process coordinates by blocks: Doing all at once costs too much memory, doing only 1 at a time costs too much time
-        # bst_progress('start', 'Warp anatomy', 'Warping MRI...', 1, 100);
         sizeMri = data.shape
         newCube = np.ones(sizeMri)
-        nVoxels = data.size     # nVoxels = np.prod(sizeMri)
-        BLOCK_SIZE = block_size # increase to speed up the warping (need more memory)
+        nVoxels = data.size     
+        BLOCK_SIZE = block_size 
         nBlocks = int(np.ceil(nVoxels / BLOCK_SIZE))
         ix0 = 0
-        # ix_inv2 = np.empty((10000,0), int)
-        # rv2 = np.zeros((BLOCK_SIZE, 3, nBlocks))
         for i in tqdm(range(nBlocks)):
-            # print(i)
-            # % Increment progress bar
-            # if (mod(i, round(nBlocks/100)) == 0)
-            #     bst_progress('inc', 1);
-            # end
-            # % Get indices in dest volume 
             ix1 = min(ix0 - 0 + BLOCK_SIZE, nVoxels)
-            # [xv,yv,zv] = ind2sub(sizeMri, ix0:ix1);
-            # rv = [xv;yv;zv]';
             xv, yv, zv = np.unravel_index(np.arange(ix0,ix1), sizeMri, order='F')
             rv = np.vstack(( np.vstack((xv, yv)), zv)).T
-            # rv = np.array(np.unravel_index(np.arange(ix0,ix1), sizeMri, order='F')).T
-            # rv2[:,:,i] = rv
-            # ix0 = ix1# + 1
-            # del rv
-            
-            # % Unwarp MRI coordinates
             if n_jobs:
-                rv_inv = bst_warp_lm(rv, A_vox_inv, W_vox_inv, destPts_vox) + rv
+                rv_inv = my_warp_lm(rv, A_vox_inv, W_vox_inv, destPts_vox) + rv
             else:
                 print('FIX IT for parallel processing')
-                # parallel, p_fun, _ = parallel_func(bst_warp_lm, n_jobs)
-                # data_new = parallel(p_fun(x[p], len(h), n_edge, phase,
-                #                           cuda_dict, pad, n_fft) for p in picks)
-                # for pp, p in enumerate(picks):
-                #     x[p] = data_new[pp]
-    
-            # % Round coordinates (nearest neighor interpolation)
             rv_inv = np.round(rv_inv)
-            
-            # % Remove values that are outside the volume
-            # iOutside = find(sum((rv_inv < 1) | (rv_inv > repmat(sizeMri,size(rv_inv,1),1)),2) > 0);
-            # iOutside = np.where( np.sum( (rv_inv < 1) | (rv_inv > np.matlib.repmat(sizeMri, rv_inv.shape[0], 1)), axis=1) > 0)[0]
-            # iOutside = np.where( np.sum( np.logical_or((rv_inv < 1) , (rv_inv > np.matlib.repmat(sizeMri, rv_inv.shape[0], 1))), axis=1) > 0)[0]
-            # iOutside = np.where( np.sum( np.logical_or((rv_inv < 1), (rv_inv > np.tile(sizeMri, (rv_inv.shape[0], 1)))), axis=1) > 0)[0]
             iOutside = np.where( np.sum( np.logical_or((rv_inv < 0), (rv_inv > np.tile(np.array(sizeMri)-1, (rv_inv.shape[0], 1)))), axis=1) > 0)[0]
             rv_inv[iOutside,:] = 1
             rv_inv = rv_inv.astype(int)
-            # print(i, iOutside.shape[0])
-            # del rv
-            # ix0 = ix1# + 1;
-            # sleep(1)
-            
-            # % Get indices from xyz coordinates
-            # ix_inv = sub2ind(sizeMri, rv_inv[:,1], rv_inv[:,2], rv_inv[:,3])
-            # ix_inv = np.ravel_multi_index([rv_inv[:,0], rv_inv[:,1], rv_inv[:,2]], sizeMri, order='F')
             ix_inv = utils.sub2ind_matlab(sizeMri, rv_inv[:,0], rv_inv[:,1], v3=rv_inv[:,2]).astype(int)
-            # print(ix_inv.min(), ix_inv.mean(), ix_inv.max())
-            # ix_inv2 = np.hstack((ix_inv2, deepcopy(ix_inv).reshape(10000,1)))
-            # % Get values in initial volume
-            # newCube[np.arange(ix0,ix1)] = data[ix_inv.astype(int).tolist()]
-            # newCube[np.arange(ix0,ix1)] =  data[np.unravel_index(ix_inv, data.shape, 'F')]
-            # newCube[np.arange(ix0,ix1)] =  data.copy().flatten('F')[ix_inv]
             newCube = newCube.flatten('F')
             newCube[np.arange(ix0,ix1)] =  data.copy().flatten('F')[ix_inv]
             newCube = newCube.reshape(sizeMri, order='F')
-            # % Set values outside of the volume to zero
             newCube = newCube.flatten('F')
             newCube[iOutside] = 0
             newCube = newCube.reshape(sizeMri, order='F')
-            # % Go to next block
             ix0 = ix1# + 1;
         del rv
         print('\n'); 
     utils.toc()
     if toplot_final and not warped_surf is None and not newCube is None:
         print('\nFIX IT for plotting')
-        # # plot to check the warped surface over warped MRI
-        # center_vox = ((np.array(newCube.shape) - 1) // 2).astype(int)
-        # center_scanner_ras = nib.affines.apply_affine(t1_warped.affine, center_vox)
-        # fig = meginpy.viz.imshow_mri(deepcopy(newCube), t1_warped, center_vox, {'Scanner RAS': center_scanner_ras}, 'MRI slice')
-        # surf_rr_vox = mne.transforms.apply_trans(np.linalg.inv(Torig), warped_surf['rr']*1000)
-        # # Based on how imshow_mri works, the "X" here is the last dim of the MRI vol,
-        # # the "Y" is the middle dim, and the "Z" is the first dim, so now that our
-        # # points are in the correct coordinate frame, we need to ask matplotlib to
-        # # do a tricontour slice like:
-        # fig.axes[0].tricontour(surf_rr_vox[:, 2], surf_rr_vox[:, 1], warped_surf['tris'], surf_rr_vox[:, 0],
-        #                        levels=[center_vox[0]], colors='r', linewidths=2.0,
-        #                        zorder=1)
     return newCube, miscs
 
 #%% A grand single module to generate pseudoMRI for a given subject 
@@ -877,14 +737,14 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
     else:
         destCtrl_new = deepcopy(destCtrl)
     
-    W, A, e, Wreg_est2 = bst_warp_transform(srcCtrl, destCtrl_new, reg=Wreg_est, comment='Estimating Wtran for surfs..', 
+    W, A, e, Wreg_est2 = my_warp_transform(srcCtrl, destCtrl_new, reg=Wreg_est, comment='Estimating Wtran for surfs..', 
                                             wtol=wtol, return_reg=True) # Note that this W, A, e are for RAS coordsys
     print(np.mean(np.abs(deepcopy(W)), axis=0), '\n\n', A, '\n\n', e)
     # print(warp_reg, e)
     
     #% % Warp the template head surface and check the distance between surface and HSPs -------------------------------------
     mesh_pos = surf2warp['rr']
-    warpedSurf_verts = bst_warp_lm(deepcopy(mesh_pos), A, W, srcCtrl) + deepcopy(mesh_pos)
+    warpedSurf_verts = my_warp_lm(deepcopy(mesh_pos), A, W, srcCtrl) + deepcopy(mesh_pos)
     warpedSurf       = deepcopy(surf2warp)
     warpedSurf['rr'] = deepcopy(warpedSurf_verts)
     if toooplot:
@@ -940,7 +800,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
         for d in template_fiducials[0]:
             if d['ident'] == fiff_id:
                 template_fiducials_m[fid_labels[fiff_id-1]]        = dict(d.items())['r']
-                template_fiducials_m_warped[fid_labels[fiff_id-1]] = (bst_warp_lm( deepcopy(dict(d.items())['r']).reshape(1,3), \
+                template_fiducials_m_warped[fid_labels[fiff_id-1]] = (my_warp_lm( deepcopy(dict(d.items())['r']).reshape(1,3), \
                                                                             A, W, srcCtrl ) + deepcopy(dict(d.items())['r']).reshape(1,3)).flatten()
     
     warped_fids2write = deepcopy(template_fiducials) # just to copy the fiducial structure
@@ -964,7 +824,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
     #% % Warp bem and brain surfaces and write files ------------------------------------------------------------------------
     mne.utils.logger.info("Warping bem and brain surfaces:  %s -> %s", template, pseudo_subject)
     # Read different surfaces of the template reconstructed by Freesurfer 
-    SurfaceFile_names, Surfaces, Surface_scaling = bst_get_SurfaceFile_v2(templates_dir, template, 
+    SurfaceFile_names, Surfaces, Surface_scaling = my_get_SurfaceFile_v2(templates_dir, template, 
                                                                           read_files=True, read_metadata=False)
     
     # Apply warping on the surfaces using the warping transform >> write the warped surface (in RAS coordsys)
@@ -979,7 +839,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
         SurfNew = dict()
         SurfNew['Faces']    = Surface['Faces'] if 'Faces' in Surface else Surface['tris']
         Surface_verts       = Surface['Vertices'] if 'Vertices' in Surface else Surface['rr']
-        SurfNew['Vertices'] = bst_warp_lm(deepcopy(Surface_verts), A, W, srcCtrl) + deepcopy(Surface_verts)
+        SurfNew['Vertices'] = my_warp_lm(deepcopy(Surface_verts), A, W, srcCtrl) + deepcopy(Surface_verts)
         del Surface_verts#, Surface_verts_nm
         if surf in ['/bem/watershed/%s_inner_skull_surface'%template, '/bem/watershed/%s_outer_skin_surface'%template, 
                     '/bem/watershed/%s_brain_surface'%template, #'/surf/lh.pial', '/surf/rh.pial'#, 
@@ -1033,7 +893,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
             ss['subject_his_id'] = pseudo_subject
             # ss['rr'] *= scale
             verts_pos =  deepcopy(ss['rr'])
-            ss['rr'] = bst_warp_lm(deepcopy(verts_pos), A, W, srcCtrl) + deepcopy(verts_pos)
+            ss['rr'] = my_warp_lm(deepcopy(verts_pos), A, W, srcCtrl) + deepcopy(verts_pos)
             del verts_pos
         if add_dist:
             dist_limit = np.inf
@@ -1075,7 +935,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
         l_old = mne.label.read_label(src)
         # pos = l_old.pos * scale
         print('warping... %s.label'%l_old.name)
-        pos = bst_warp_lm(deepcopy(l_old.pos), A, W, srcCtrl) + deepcopy(l_old.pos)
+        pos = my_warp_lm(deepcopy(l_old.pos), A, W, srcCtrl) + deepcopy(l_old.pos)
         viz.myMlabPoint3d(deepcopy(pos), scale_factor=0.0001,  newfig=False, toplot=toplot)
         l_new = mne.label.Label(l_old.vertices, pos, l_old.values, l_old.hemi,
                       l_old.comment, subject=pseudo_subject, name=l_old.name,
