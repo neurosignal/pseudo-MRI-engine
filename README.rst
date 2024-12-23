@@ -111,6 +111,19 @@ Contributing
 Contributions are welcome! If you have suggestions or find bugs, please open an issue or submit a pull request.
 
 
+Citing pseudo-MRI engine
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+When using the software package in a publication, please cite the following article:
+
+.. code-block:: BiBTeX
+
+
+	@article{
+		author = {Jaiswal, A.,  Nenonen J., and Parkkonen, L.},
+		title = {Pseudo-MRI engine for MRI-free electromagnetic source imaging},
+		journal = {Human Brain Mapping},
+	}	
 
 
 
