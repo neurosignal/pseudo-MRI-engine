@@ -105,5 +105,12 @@ Requirements
 - Other dependencies (see `requirements.txt`)
 
 
+Contributing
+============
+
+Contributions are welcome! If you have suggestions or find bugs, please open an issue or submit a pull request.
+
+
+
 
 
