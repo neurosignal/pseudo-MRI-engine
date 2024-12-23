@@ -614,7 +614,6 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
         else:
             raise Exception('template_headsurf mush be dense_scalp or scalp or outer_skin.')
 
-        
     surf2warp = deepcopy(template_headsurf)
     hpis_hsps_good = find_good_HSPs(hpis_hsps, surf2warp, fiducial_file, above_thrs=above_thrs, 
                                     min_rej_percent=dig_reject_min_max[0], 
@@ -704,7 +703,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
     srcCtrl  = deepcopy(closest_vert_pos_all) # source control points (p)
     destCtrl = deepcopy(digpoints)            # destination contrl points (q)
     if toooplot:
-        figg = viz.myMlabTriagularMesh(surf2warp['rr'], surf2warp['tris'], toplot=True, newfig=True, representation='s', color=(.751,.75,0.75), opacity=.3, axis=False)
+        figg = viz.myMlabTriagularMesh(surf2warp['rr'], surf2warp['tris'], toplot=True, newfig=True, representation='s', color=(.7,.7,.7), opacity=.3, axis=False)
         viz.myMlabPoint3d(srcCtrl, newfig=False, scale_factor=0.004, color=(1,0,0), axis=False) 
         viz.myMlabPoint3d(destCtrl, newfig=False, scale_factor=0.004, color=(0,1,0), axis=False)
         if report!=None and report_file!=None:
@@ -719,7 +718,13 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
         destCtrl_new = shift_destCtrl_inward_to_maintain_realistic_scalp2hsp_dist(deepcopy(destCtrl), 
                                                                                   trans_ras2neuromag, trans_neuromag2ras, 
                                                                                   destHSPsShiftInwrd=destHSPsShiftInwrd, toplot=False)
-        viz.myMlabPoint3d(destCtrl_new, toplot=toooplot, newfig=False, scale_factor=0.004, color=(0,0,0))
+        viz.myMlabPoint3d(destCtrl,     toplot=toooplot, newfig=True,  scale_factor=0.002, color=(0,0,1))
+        viz.myMlabPoint3d(destCtrl_new, toplot=toooplot, newfig=False, scale_factor=0.002, color=(0,1,0))
+        if report!=None and report_file!=None:
+            viz.get_put_snaps(report, report_file, title='Inward shifted hsps', section='Headshape', tags=('hsps',), 
+                  caption=f"Blue: original, Green: inward shifted {destHSPsShiftInwrd * 1000} mm", 
+                  add2report=True, save=True, fig3d=gcf(),  image_format='png', replace=True, **args.snap_config)
+            close(gcf())
     else:
         destCtrl_new = deepcopy(destCtrl)
     
@@ -727,7 +732,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
                                             wtol=wtol, return_reg=True) # Note that this W, A, e are for RAS coordsys
     print(np.mean(np.abs(deepcopy(W)), axis=0), '\n\n', A, '\n\n', e)
     
-    #% % Warp the template head surface and check the distance between surface and HSPs -------------------------------------
+    #% % Warp the template head surface and check the distance between surface and HSPs 
     mesh_pos = surf2warp['rr']
     warpedSurf_verts = my_warp_src(deepcopy(mesh_pos), A, W, srcCtrl) + deepcopy(mesh_pos)
     warpedSurf       = deepcopy(surf2warp)
@@ -763,7 +768,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
                              pseudo_subjects_dir, pseudo_subject, srcCtrl, destCtrl, W, A, e, 
                              coord_frame='MRI (surface RAS)',  misc_comments=misc_comments, return_fname=True)
     add_line_to_file(config_fname, "Regularization & Bending energy:\n")
-    add_line_to_file(config_fname, "Reguln applied to estimate Wtrans for surface \t= %s\n"%Wreg_est2)
+    add_line_to_file(config_fname, "Reguln. applied to estimate Wtrans for surface \t= %s\n"%Wreg_est2)
     add_line_to_file(config_fname, "Bending energy in estimating Wtrans for surface = %s\n"%e)
         
     #% % Find source mri, bems, src, etc. paths
@@ -799,7 +804,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
     trans_temp = mne.transforms.Transform(4, 5, trans_neuromag2ras_warped)
     trans_file_warped = '%s/coreg/%s-trans.fif'%(subject_directory, pseudo_subject)
     mne.write_trans(trans_file_warped, trans_temp)
-    print('\ntrans file for pMRI is written:  %s'%trans_file_warped)  
+    print('\nTrans file for pMRI is written:  %s'%trans_file_warped)  
     
     #% % Warp headmodel and brain surfaces and write files 
     mne.utils.logger.info("Warping headmodel and brain surfaces:  %s -> %s", template, pseudo_subject)
@@ -828,14 +833,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
                     f'/bem/{template}-head-dense.fif',
                     ]:
             viz.myMlabTriagularMesh(SurfNew['Vertices'], SurfNew['Faces'], toplot=toplot, newfig=False, 
-                                            figname=figname_final, representation='surface', opacity=0.3)
-            view(azimuth=0, elevation=90) if toplot else None
-        if report!=None and report_file!=None:
-            viz.get_put_snaps(report, report_file, title='pseudo-MRI surfaces', section='Warped surfaces', tags=('pseudoMRI',), 
-                  caption="Warped head and cortical surface", 
-                  add2report=True, save=True, fig3d=gcf(),  image_format='png', replace=True, **args.snap_config)
-            close(gcf())
-        
+                                            figname=figname_final, representation='surface', opacity=0.2)        
         SurfNew_fname = '%s%s'%(subject_directory, surf.replace(template, pseudo_subject))
         print('Writing the warped surface file as: \n%s'%SurfNew_fname)
         makedirs( utils.dirname2(SurfNew_fname), exist_ok=True)
@@ -851,7 +849,11 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
                                       create_stamp='', volume_info=None, file_format='auto', overwrite=True)
         SurfWarped[surf] = SurfNew
         del Surface, SurfNew
-        
+    if report!=None and report_file!=None:
+        viz.get_put_snaps(report, report_file, title='pseudo-MRI surfaces', section='Warped surfaces', tags=('pseudoMRI',), 
+              caption="Warped head and cortical surface", 
+              add2report=True, save=True, fig3d=gcf(),  image_format='png', replace=True, **args.snap_config)
+        close(gcf())
     # Make bem surface soft links
     try:
         utils.make_surfaces_soft_links3(pseudo_subjects_dir, pseudo_subject, surfs_from='mri2surf')
@@ -889,7 +891,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
     
     #% % Warp labels
     mne.utils.logger.info("Warping labels:  %s -> %s", template, pseudo_subject)
-    viz.myMlabTriagularMesh(warpedSurf['rr'], warpedSurf['tris'], toplot=toplot, newfig=True, representation='s', opacity=0.2)
+    # viz.myMlabTriagularMesh(warpedSurf['rr'], warpedSurf['tris'], toplot=toplot, newfig=True, representation='s', opacity=0.2)
     lbl_dir = join(templates_dir, template, 'label')
     pattern = None
     if pattern is None:
@@ -915,7 +917,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
         # pos = l_old.pos * scale
         print('warping... %s.label'%l_old.name)
         pos = my_warp_src(deepcopy(l_old.pos), A, W, srcCtrl) + deepcopy(l_old.pos)
-        viz.myMlabPoint3d(deepcopy(pos), scale_factor=0.0001,  newfig=False, toplot=toplot)
+        # viz.myMlabPoint3d(deepcopy(pos), scale_factor=0.0001,  newfig=False, toplot=toplot)
         l_new = mne.label.Label(l_old.vertices, pos, l_old.values, l_old.hemi,
                       l_old.comment, subject=pseudo_subject, name=l_old.name,
                       filename=l_old.filename.replace(templates_dir, pseudo_subjects_dir).replace(template, pseudo_subject))

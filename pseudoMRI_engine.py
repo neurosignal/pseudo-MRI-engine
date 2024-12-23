@@ -44,7 +44,7 @@ args.show_good_hsps_idx = False
 args.verbose            = True
 args.nmax_Ctrl          = 200
 
-#%%
+#%% Check and set default parameters
 from configuration_file import check_set_input_config
 args  = check_set_input_config(args)
 
@@ -55,6 +55,7 @@ from datetime import datetime
 from mne import Report
 from utils.meginpy.pseudoMRI import pseudomriengine
 from utils.meginpy.utils import tic, toc
+
 #%% Set an HTML report
 report_dir  = join(args.pseudo_MRI_dir, args.pseudo_MRI_name, "report")
 makedirs(report_dir, exist_ok=True)
@@ -63,7 +64,8 @@ args.report      = Report(title=f'pseudo-MRI generation report for subject: {arg
 args.report_file = join(report_dir, f"pseudoMRI_report{date_str}.html")
 args.report.add_sys_info(title='Analysis platform Info.')
 args.report.add_html(args, title='All parameters', tags=('parameters',))
-args.report.save(fname=args.report_file, open_browser=True, 
+args.report.save(fname=args.report_file, 
+                 open_browser=True if args.open_browser else False, 
                  overwrite=True, sort_content=False, verbose=args.verbose)
 
 #%% Run pseudomriengine
@@ -87,4 +89,9 @@ pseudomriengine(args.pseudo_MRI_name, args.pseudo_MRI_dir, args.headshape,
                 nmax_Ctrl=args.nmax_Ctrl,
                 report=args.report, report_file=args.report_file, args=args)
 toc()
-    
+
+#%% Open report
+if args.open_report:
+    args.report.save(fname=args.report_file, open_browser=True, 
+                 overwrite=True, sort_content=False, verbose=args.verbose)
+#%% ############################## END ########################################
