@@ -1,23 +1,56 @@
-# pseudo-MRI-engine
+==========================
+Pseudo-MRI engine
+==========================
 
-Pseudo-MRI engine for MRI-free electromagnetic source imaging.
-It utilizes the head shape digitization points, generally acquired during MEG/EEG acquisition, for warping a given MRI template to the best fit to the subject's head. It yields a set of robustly warped MRI and its derivative surfaces, referred to as pseudo-MRI. Although the dense and evenly sampled scalp digitization points are recommended, the software can efficiently generate pseudo-MRI even with as few as 25 points (nearly 1 point per 25 cm2).
-pseudo-MRI-engine is a pure Python package, and depends on several other Python packages. pseudo-MRI-engine requires Python version 3.7 or higher.
+Overview
+========
+
+Pseudo-MRI engine utilizes the head shape digitization points, generally acquired during MEG/EEG acquisition, for accurately warping a given MRI template to the best fit to the subject's head. 
+It yields a set of robustly warped MRI and its derivative surfaces, referred to as pseudo-MRI. Although the dense and evenly sampled scalp digitization points are recommended, the software can efficiently generate pseudo-MRI even with as few as 25 points (nearly 1 point per 25 cm2).
+Pseudo-MRI-engine is a pure Python package, and depends on several other Python packages; it requires Python version 3.7 or higher.
+
+| **GitHub Repository**: https://github.com/neurosignal/pseudo-MRI-engine
 
 
-**Installation**
+Features
+--------
+• It can generate a subject-specific template MRI, i.e., pseudo-MRI, based on the head shape. 
+• Such a pseudo-MRI can readily be used with severals oftware packages for MEG/EEG source imaging.
+• Easy-to-use interface for quick integration into workflows.
+• Open-source and extendable.
 
 
-    • Download the software: 
-    git clone https://github.com/neurosignal/pseudo-MRI-engine.git
-    • Change the current direct to pseudo-MRI-engine
-    cd pseudo-MRI-engine
-    • Set up a Python environment, for example as:
-    conda activate < your environment>
-    • Run to check and install all dependencies for the pseudo-MRI engine:
-    pip install -r requirements.txt
-    • Check the installation: 
-    python pseudoMRI_engine.py –help
+Quick Start
+===========
+
+Installation
+------------
+
+• Download the software: 
+git clone https://github.com/neurosignal/pseudo-MRI-engine.git
+• Change the current direct to pseudo-MRI-engine
+cd pseudo-MRI-engine
+• Set up a Python environment, for example as:
+conda activate < your environment>
+• Run to check and install all dependencies for the pseudo-MRI engine:
+pip install -r requirements.txt
+• Check the installation: 
+python pseudoMRI_engine.py –help
+
+Install the package using pip:
+
+.. code-block:: bash
+
+   pip install pseudo-MRI-engine
+
+Or clone the repository and install manually:
+
+.. code-block:: bash
+
+   git clone https://github.com/neurosignal/pseudo-MRI-engine
+   cd pseudo-MRI-engine
+   pip install .
+
 
 
 **Preparation of a template MRI:**
