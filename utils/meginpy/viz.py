@@ -2,13 +2,17 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Mar 10 22:27:11 2019
-Author: Amit Jaiswal <amit.jaiswal@megin.fi>, <amit.jaiswal@aalto.fi>
-meginpy.viz: This is part of MEGINPY platform employing tools for visualization.
+@author: Amit Jaiswal, Megin Oy, Espoo, Finland  
+        <amit.jaiswal@megin.fi>, <amit.jaiswal@aalto.fi>
+USAGE: meginpy.viz: This is part of MEGINPY platform employing tools for visualization.
 
 """
 import mne
+from mne.surface import read_surface
+from mne import read_bem_surfaces, write_bem_surfaces, transform_surface_to
 from mne.transforms import read_trans, invert_transform, apply_trans
-from mayavi.mlab import figure, points3d, triangular_mesh, orientation_axes, view, screenshot
+from mayavi.mlab import (figure, points3d, triangular_mesh, 
+                         orientation_axes, view, screenshot)
 from mayavi.mlab import gcf as m_gcf
 from mne.utils import verbose
 from copy import deepcopy
@@ -19,7 +23,6 @@ from time import sleep
 from matplotlib.pyplot import close
 import numpy as np
 
-#%%=========================== read and plot surface =========================================== 
 @verbose
 def read_plot_surface(surface_file, transfile=None, toplot=False, newfig=True, figname=None, 
                       representation='wireframe', opacity=0.1, axis=True, fname2writeAsBEMsurface=None, 
@@ -27,24 +30,24 @@ def read_plot_surface(surface_file, transfile=None, toplot=False, newfig=True, f
                       verbose=None, return_scene=False):
     representation='wireframe' if representation in ['wireframe', 'w'] else 'surface'
     try:
-        surface_mesh = mne.surface.read_surface(surface_file, read_metadata=False, return_dict=True, 
+        surface_mesh = read_surface(surface_file, read_metadata=False, return_dict=True, 
                                                 file_format='auto', verbose=None)[2]
         surface_mesh.update(coord_frame=mne.io.constants.FIFF.FIFFV_COORD_MRI)
         surface_mesh['rr'] /= 1000. # convert to m
     except ValueError as valuerr: # this is reading dense and meadium skin surface
         print(valuerr)
-        surface_mesh = mne.read_bem_surfaces(surface_file)[0]
+        surface_mesh = read_bem_surfaces(surface_file)[0]
   
     if not transfile is None:
-        surface_mesh = mne.transform_surface_to(surface_mesh, 'head', 
+        surface_mesh = transform_surface_to(surface_mesh, 'head', 
                                                 mne.transforms.read_trans(transfile), copy=True) 
     if transfile is None and not transtoapply is None:
-        surface_mesh['rr'] = mne.transforms.apply_trans(transtoapply, deepcopy(surface_mesh['rr']))
+        surface_mesh['rr'] = apply_trans(transtoapply, deepcopy(surface_mesh['rr']))
     if not fname2writeAsBEMsurface is None:
         print('\nWriting: %s\n'%fname2writeAsBEMsurface)
         surface_mesh['id']    = surfID      # just to fake it as bem surface corresponding to given ID
         surface_mesh['sigma'] = surfSigma   # just to fake it
-        mne.write_bem_surfaces(fname2writeAsBEMsurface,[surface_mesh], verbose=None)
+        write_bem_surfaces(fname2writeAsBEMsurface,[surface_mesh], verbose=None)
     fig3d  = None
     if toplot:
         if newfig:
@@ -60,7 +63,6 @@ def read_plot_surface(surface_file, transfile=None, toplot=False, newfig=True, f
     out = [surface_mesh, fig3d] if return_scene else surface_mesh
     return out
 
-#%%=========================== Get snapshots of 3D scene =========================================== 
 def get_snapped_figure_from_3d(fig_3d, figsize=(10,6), coordsys='RAS', tight=False, nsnap=6, titlepad=0,
                                top=1.0,bottom=0.0,left=0.0,right=1.0,hspace=-0.1,wspace=-0.1):    
     nrows, ncols = [1, 4] if nsnap==4 else [1, 3] if nsnap==3 else [2, 3]
@@ -92,7 +94,6 @@ def get_snapped_figure_from_3d(fig_3d, figsize=(10,6), coordsys='RAS', tight=Fal
     sleep(.5)
     return fig_2d               
 
-#===========================   ================================================================== 
 def myMlabPoint3d(vertices=None, toplot=True, newfig=True, scale_factor=.008, opacity=0.5, mode='sphere', 
                   color=None, figname=None, axis=True, plot_axis_ori=True, transfile=None):
     if not transfile is None:
@@ -108,15 +109,17 @@ def myMlabPoint3d(vertices=None, toplot=True, newfig=True, scale_factor=.008, op
         if not vertices is None:
             if vertices.shape==(3,):
                 vertices = vertices.reshape([1,3])
-            points3d(vertices[:,0], vertices[:,1], vertices[:,2], scale_factor=scale_factor, opacity=opacity, mode=mode,
-                          color=tuple(random([1,3]).tolist()[0]) if color==None else color)#(0,0.7,0))
+            points3d(vertices[:,0], vertices[:,1], vertices[:,2], scale_factor=scale_factor, 
+                     opacity=opacity, mode=mode, 
+                     color=tuple(random([1,3]).tolist()[0]) if color==None else color)
         if plot_axis_ori:
             orientation_axes()
     return fig3d
 
-#===========================   ================================================================== 
-def myMlabTriagularMesh(vertices=None, tris=None, toplot=True, newfig=True, representation='wireframe', scale_factor=.008, 
-                       opacity=0.5, mode='sphere', color=None, figname=None, unit='m', axis=False, transfile=None, bgcolor=(1,1,1), fig=None):
+def myMlabTriagularMesh(vertices=None, tris=None, toplot=True, newfig=True, 
+                        representation='wireframe', scale_factor=.008, opacity=0.5, 
+                        mode='sphere', color=None, figname=None, unit='m', axis=False, 
+                        transfile=None, bgcolor=(1,1,1), fig=None):
     representation='surface' if representation in ['s', 'surf', 'surface'] else 'wireframe'
     if not transfile is None:
         vertices = apply_trans(invert_transform(read_trans(transfile))['trans'], vertices)
@@ -131,11 +134,11 @@ def myMlabTriagularMesh(vertices=None, tris=None, toplot=True, newfig=True, repr
                 points3d(vertices[:,0], vertices[:,1], vertices[:,2], 
                                  scale_factor=scale_factor, opacity=opacity, mode=mode, color=clr)
             else:
-                triangular_mesh(vertices[:,0], vertices[:,1], vertices[:,2], tris, representation=representation,
-                                     scale_factor=scale_factor, opacity=opacity, mode=mode, color=clr)#(0,0.7,0))
+                triangular_mesh(vertices[:,0], vertices[:,1], vertices[:,2], tris, 
+                                representation=representation, scale_factor=scale_factor, 
+                                opacity=opacity, mode=mode, color=clr)
         orientation_axes()
         
-#%%
 def tight_equate_axis_lim(ax, apply_on='xy'):
     ax = np.array(ax) if not isinstance(ax, np.ndarray) else ax
     for ii in range(len(apply_on)):
@@ -147,7 +150,6 @@ def tight_equate_axis_lim(ax, apply_on='xy'):
         for ii in range(len(ax.flatten())):
             eval( f'ax.flatten()[ii].set_{ax_}lim( min(lim1), max(lim2))')
 
-#%%
 def get_plot_dig_sensors(inst, fig=None, newfig=True):
     chs = np.array([inst.info['chs'][ii]['loc'] for ii in range(len(inst.info['chs']))])
     dig = np.array([inst.info['dig'][ii]['r'] for ii in range(len(inst.info['dig']))])
@@ -156,7 +158,6 @@ def get_plot_dig_sensors(inst, fig=None, newfig=True):
     if dig.shape[0]>3:  myMlabPoint3d(dig, scale_factor=.003, newfig=False, color=(1,0,1))
     return fig      
 
-#%% Take snaps of final smooth surface and put in report 
 def get_put_snaps(repMNE, f_RepMNE, title, section, tags, caption, add2report=True,
                   save=True, fig3d=None, image_format='png', replace=False, verb=True, 
                   open_browser=False, figsize=(10, 6), coordsys='RAS', tight=False, nsnap=6, 
@@ -175,15 +176,15 @@ def get_put_snaps(repMNE, f_RepMNE, title, section, tags, caption, add2report=Tr
                         overwrite=True, sort_content=False, verbose=verb)
             print(f'Snaps added to report: {f_RepMNE}')
             
-#%% Plot to check surface and digitization points alignment with anatomy (MRI)
-def plot_surf_anat_alignment_v2(wdata, Torig, destCtrl, warpedSurf, title=None, nslice=8, tol=2, side_leave='25%', 
-                                lw=1.5, titlecolor=(.8,.9,.2), titlefsize=18, cmap='gist_gray_r', zoom_in='10%',
-                                viewmodes = ['yz', 'xy', 'xz']):
+def plot_surf_anat_alignment_v2(wdata, Torig, destCtrl, warpedSurf, title=None, nslice=8, tol=2, 
+                                side_leave='25%', lw=1.5, titlecolor=(.8,.9,.2), titlefsize=18, 
+                                cmap='gist_gray_r', zoom_in='10%', viewmodes = ['yz', 'xy', 'xz']):
     zoom_in = -int(zoom_in[:-1])/100
     side_leave = int(side_leave.replace('%', ''))/100
     surf_rr_vox = apply_trans(np.linalg.inv(Torig), deepcopy(warpedSurf['rr'])*1000)
     destCtrl_vox  = apply_trans(np.linalg.inv(Torig), deepcopy(destCtrl)*1000)
-    slice_idx =   np.linspace(int(wdata.shape[0]*side_leave), wdata.shape[0] - int(wdata.shape[0]*side_leave), nslice, dtype=int)
+    slice_idx =   np.linspace(int(wdata.shape[0]*side_leave), wdata.shape[0] - \
+                              int(wdata.shape[0]*side_leave), nslice, dtype=int)
     fig = plt.figure(num=title)
     plt.suptitle(str(title))
     nrow, ncol, nplot = len(viewmodes)*2, nslice//2, 0
@@ -235,3 +236,4 @@ def plot_surf_anat_alignment_v2(wdata, Torig, destCtrl, warpedSurf, title=None, 
                 plt.margins(zoom_in) # 10% zoom in
                 plt.box(on=False);   plt.xticks([]);    plt.yticks([])
     return fig
+

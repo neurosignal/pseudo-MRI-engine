@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun Feb  5 18:33:36 2023
+Created on Tue Feb  5 18:33:36 2022
 
 @author: Amit Jaiswal, Megin Oy, Espoo, Finland  
         <amit.jaiswal@megin.fi> <amit.jaiswal@aalto.fi>
-USAGE:
+USAGE: meginpy.pseudoMRI: Implementation of the pseudo-MRI module.
 """
 import numpy as np
 import mne
@@ -15,7 +15,6 @@ from os.path import join, exists, dirname, relpath
 from os import makedirs,  walk      
 from mne.io.constants import FIFF
 from scipy.spatial import distance
-from mayavi.mlab import figure, points3d, orientation_axes, text3d, gcf, close
 from scipy import linalg, stats
 from copy import deepcopy
 from IsoScore import IsoScore
@@ -29,20 +28,19 @@ from itertools import product
 from tqdm import tqdm
 import nibabel as nib
 from nibabel.processing import resample_to_output
+import configparser
+from mayavi.mlab import figure, points3d, orientation_axes, text3d, gcf, close
 
-#=========================== find closest node location and index  ========================================================= 
 def find_closest_node(node, nodes): # function to find closest points
     closest_index = distance.cdist([node], nodes).argmin()
     return nodes[closest_index], closest_index
 
-#=========================== find closest node location, index and distance ================================================ 
 def find_closest_node_dist(node, nodes, multipy2dist=1): # function to find closest points
     closest_index = distance.cdist([node], nodes).argmin()
     closest_node = nodes[closest_index]
-    diff = np.sqrt(np.sum(np.square(node-closest_node))) * multipy2dist # multipy2dist is to convert the unit m,cm,mm etc
+    diff = np.sqrt(np.sum(np.square(node-closest_node))) * multipy2dist 
     return closest_node, closest_index, diff
 
-#===================================find and plot isotrack points ==========================================================
 @verbose
 def find_plot_isotraks(headshape_file, fiducial_output_file=None, toplot=False, newfig=True, scale_factor=.001, helmet=True, 
                        coord_frame='head', color=None, mode='sphere', opacity=0.4, figname=None, return_out=True, 
@@ -122,7 +120,6 @@ def get_ras_to_neuromag_trans_from_fiducial_file(fiducial_file):
     trans_neuromag2ras = linalg.inv(deepcopy(trans_ras2neuromag))
     return trans_ras2neuromag, trans_neuromag2ras
 
-#%% get fiducials in different formats    
 def get_fiducial_LNR(fiducial_file):
     fids_ras = mne.io.read_fiducials(fiducial_file)[0]
     labels = ['', 'LPA','Nasion','RPA']
@@ -134,7 +131,6 @@ def get_fiducial_LNR(fiducial_file):
                 fids_LNR_dict[labels[fiff_id]] = dict(d.items())['r']
     return fids_ras, fids_LNR, fids_LNR_dict
 
-#%% Find the best surface multiplier to make the surface fitting inside the digitization points
 def find_uniform_scaler_for_minimum_dist(points1, points2, n_iter=200, mode='dist_sum'):
     points1_rphitheta = mne.transforms._cart_to_sph(points1)
     points2_rphitheta = mne.transforms._cart_to_sph(points2)
@@ -195,8 +191,8 @@ def find_uniform_scaler_for_minimum_dist(points1, points2, n_iter=200, mode='dis
     
     return mult_mindist
         
-#%% Find good quality HSPs that are abobe a threshold point and not too far from the surface
-def find_good_HSPs(hpis_hsps, surf2warp, fiducial_file, above_thrs=0.02, min_rej_percent=2, max_rej_percent=10, 
+def find_good_HSPs(hpis_hsps, surf2warp, fiducial_file, above_thrs=0.02, 
+                   min_rej_percent=2, max_rej_percent=10, 
                    toplot=False,show_good_hsps_idx=False, return_scene=False):
     
     n_min_rej_hsp = np.ceil(hpis_hsps.shape[0]*min_rej_percent/100).astype(int)
@@ -226,11 +222,9 @@ def find_good_HSPs(hpis_hsps, surf2warp, fiducial_file, above_thrs=0.02, min_rej
     outward_hsp_percentage = (len(outward_hsp_idx)*100) / len(point_set1)
     all_dists = np.abs(point_set1_rphitheta[:,0] - point_set2_scaled_rphitheta[:,0])*1000 # in mm
     
-    if outward_hsp_percentage==0 and all_dists.max()<20.0: # when all points are inside the surface and the head is not too small for the template 
+    if outward_hsp_percentage==0 and all_dists.max()<20.0:
         reject_idx = np.array([], int)
-    
     else:
-        # if outward_hsp_percentage < 5:
         """ find outliers """
         Q1      = np.percentile(all_dists, 25, interpolation = 'midpoint')
         Q3      = np.percentile(all_dists, 75, interpolation = 'midpoint')
@@ -270,7 +264,6 @@ def find_good_HSPs(hpis_hsps, surf2warp, fiducial_file, above_thrs=0.02, min_rej
     else:
         return good_hpis_hsps
     
-#%% shift_destCtrl_inward_to_maintain_realistic_scalp2hsp_dist 
 def shift_destCtrl_inward_to_maintain_realistic_scalp2hsp_dist(destCtrl, trans_ras2neuromag, 
                                                                trans_neuromag2ras, destHSPsShiftInwrd=0.0025, toplot=True):
     # In general, the skin surface stays just below the digitized points which is 1-3 mm in case when we digitize the HPI ...
@@ -294,7 +287,6 @@ def shift_destCtrl_inward_to_maintain_realistic_scalp2hsp_dist(destCtrl, trans_r
         
     return destCtrl4
 
-#%%
 def my_warp3d_trans(p, q, reg=1e-3, reg_mode=2, comment='', wtol=1e-06, return_reg=False):
     N = p.shape[0]
     px = np.tile(p[:,0].reshape((p[:,0].shape[0], 1)), (1, N))
@@ -327,7 +319,6 @@ def my_warp3d_trans(p, q, reg=1e-3, reg_mode=2, comment='', wtol=1e-06, return_r
         H = linalg.pinv(L) * D
     W = H[:N,:]
     A = H[N:, :]
-    # e = np.sum(diag(W.T * K * W));
     e = np.sum(np.diag(np.dot(W.T, np.dot(K, W))))
     print('\n%s'%comment + ' Bending energy = %s'%e + ' (reg = %s)\n'%reg )
     if return_reg:
@@ -335,7 +326,6 @@ def my_warp3d_trans(p, q, reg=1e-3, reg_mode=2, comment='', wtol=1e-06, return_r
     else:
         return W, A, e
 
-#%% 
 def my_warp_src(r, A, W, p):
     rw = np.dot(r, A[:3,:3])
     rw = rw + A[3,:]
@@ -346,14 +336,11 @@ def my_warp_src(r, A, W, p):
     rw = rw + np.dot(U, W)   
     return rw
 
-#%% Add a line to configuration file
 def add_line_to_file(fname, line):
     with open(fname, 'a') as fileID:
         fileID.writelines(line)
     fileID.close()
     
-#%% Write the warping configuration file
-import configparser
 def write_mri_warping_config(subjects_dir_from, isotrak_fname, subject_from, 
                              subjects_dir_to, subject_to, 
                              srcCtrl, destCtrl, W, A, e, coord_frame='MRI (surface RAS)', 
@@ -495,12 +482,12 @@ def apply_warp_to_anatomy(srcPts, destPts, mridata, t1_fname=None, Torig=None, b
         t1 = nib.load(t1_fname); print(t1)
         if resample:
             print('\nNote: Applying resampling....')
-            t1_res = resample_to_output(deepcopy(t1), voxel_sizes=rs_voxel_sizes, out_class=nib.freesurfer.mghformat.MGHImage)
+            t1_res = resample_to_output(deepcopy(t1), voxel_sizes=rs_voxel_sizes, 
+                                        out_class=nib.freesurfer.mghformat.MGHImage)
             del t1
             t1  = t1_res
             print(t1)
         data = np.asarray(t1.dataobj)
-    
         mgh = nib.MGHImage(t1.dataobj, t1.affine)
         vox2ras_tkr = mgh.header.get_vox2ras_tkr()
         Torig = vox2ras_tkr 
@@ -547,7 +534,9 @@ def apply_warp_to_anatomy(srcPts, destPts, mridata, t1_fname=None, Torig=None, b
                 print('Parallel processing is not supported yet; stay tuned.')
                 rv_inv = my_warp_src(rv, A_vox_inv, W_vox_inv, destPts_vox) + rv
             rv_inv = np.round(rv_inv)
-            iOutside = np.where( np.sum( np.logical_or((rv_inv < 0), (rv_inv > np.tile(np.array(sizeMri)-1, (rv_inv.shape[0], 1)))), axis=1) > 0)[0]
+            iOutside = np.where( np.sum( np.logical_or((rv_inv < 0), 
+                                                       (rv_inv > np.tile(np.array(sizeMri)-1, 
+                                                                         (rv_inv.shape[0], 1)))), axis=1) > 0)[0]
             rv_inv[iOutside,:] = 1
             rv_inv = rv_inv.astype(int)
             ix_inv = utils.sub2ind_matlab(sizeMri, rv_inv[:,0], rv_inv[:,1], v3=rv_inv[:,2]).astype(int)
@@ -891,7 +880,6 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
     
     #% % Warp labels
     mne.utils.logger.info("Warping labels:  %s -> %s", template, pseudo_subject)
-    # viz.myMlabTriagularMesh(warpedSurf['rr'], warpedSurf['tris'], toplot=toplot, newfig=True, representation='s', opacity=0.2)
     lbl_dir = join(templates_dir, template, 'label')
     pattern = None
     if pattern is None:
