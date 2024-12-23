@@ -31,19 +31,27 @@ Download the software
 git clone https://github.com/neurosignal/pseudo-MRI-engine.git
 
 Change the directory
+
 .. code-block:: bash
+
 cd pseudo-MRI-engine
 
 Set up a Python environment, for example as:
+
 .. code-block:: bash
+
 conda activate < your environment>
 
 Run to check and install all dependencies for the pseudo-MRI engine:
+
 .. code-block:: bash
+
 pip install -r requirements.txt
 
 Check the installation: 
+
 .. code-block:: bash
+
 python pseudoMRI_engine.py –help
 
 
