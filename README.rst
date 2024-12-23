@@ -26,13 +26,13 @@ Quick Start
 Installation
 ------------
 
-Download the software
+Download the software:
 
 .. code-block:: bash
 
     git clone https://github.com/neurosignal/pseudo-MRI-engine.git
 
-Change the directory
+Change the directory:
 
 .. code-block:: bash
 
@@ -63,36 +63,74 @@ Preparation of a template MRI
 Segment a template MRI, for example MNE152, using recon-all routine of FreeSurfer (or FastSurfer). Also compute head model and scalp surfaces using MNE-Python routines. Furthermore, the fiducial points for the template MRI can be identified using MNE-Python coregistration module and saved as FIFF file with an appropriate pattern from CrusHelix, Targus, and ITnotch.
 
 
-**How to use**
+Usage
+-----
+
+Check installation and input arguments:
+
+.. code-block:: bash
+
+    python pseudo-MRI-engine.py --help
+
+Run as:
+
+.. code-block:: bash
+
+    python pseudoMRI_engine.py --pseudo_MRI_name <subject ID> --pseudo_MRI_dir <pseudo-MRI folder> --headshape <headshape file> --template_MRI_name <name of template MRI folder> --template_MRI_dir <the parent directory of the template MRI folder> --fiducial_file <fiducial file of the template MRI> --preauri_loc <the position of the LPA/RPA considered during the head digitization> --nmax_Ctrl <maximum number of the control points to compute warping> --dense_hsp <set this flag to force densifying the digitization points if too sparse> --open_report <set this flag to open the HTML report file in the end>
 
 
-**Setup the Python environment **
+Requirements
+============
+
+- glob2==0.7
+
+- ipython==8.12.3
+
+- IsoScore==2.0.1
+
+- matplotlib==3.7.2
+
+- mayavi==4.8.1
+
+- mne==1.9.0
+
+- nibabel==4.0.2
+
+- nilearn==0.9.2
+
+- numpy==1.24.4
+
+- scipy==1.10.1
+
+- Other dependencies (see `requirements.txt`)
 
 
-conda activate <your_python_environment_where_pseudo-MRI-engine_is_installed>
+Contributing
+============
 
-**Running the software in terminal**
-
-
-python pseudo-MRI-engine.py --help
-
-python pseudoMRI_engine.py --pseudo_MRI_name <subject ID> --pseudo_MRI_dir <pseudo-MRI folder> --headshape <headshape file> --template_MRI_name <name of template MRI folder> --template_MRI_dir <the parent directory of the template MRI folder> --fiducial_file <fiducial file of the template MRI> --preauri_loc <the position of the LPA/RPA considered during the head digitization> --nmax_Ctrl <maximum number of the control points to compute warping> --dense_hsp <set this flag to force densifying the digitization points if too sparse> --open_report <set this flag to open the HTML report file in the end>
+Contributions are welcome! If you have suggestions or find bugs, please open an issue or submit a pull request.
 
 
-**Dependencies**
+Citing pseudo-MRI engine
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+When using the software package in a publication, please cite the following articles:
+
+.. code-block:: BiBTeX
 
 
-glob2==0.7
-ipython==8.12.3
-IsoScore==2.0.1
-matplotlib==3.7.2
-mayavi==4.8.1
-mne==1.9.0
-nibabel==4.0.2
-nilearn==0.9.2
-numpy==1.24.4
-scipy==1.10.1
-
+	@article{doi: XXXXXXXXXX,
+		author = {Jaiswal, A.,  Nenonen J., and Parkkonen, L.},
+		title = {Pseudo-MRI engine for MRI-free electromagnetic source imaging},
+		journal = {Human Brain Mapping},
+		volume = {xx},
+		number = {6},
+		pages = {xxxxxx},
+		year = {xxxx},
+		doi = {xxxxx},
+		URL = {xxxxx},
+		eprint = {xxxx}
+	}	
 
 
 
