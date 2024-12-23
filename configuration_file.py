@@ -28,14 +28,14 @@ def check_set_input_config(args):
         args.preauri_loc = '_original'  
     else:
         args.preauri_loc = ('_' + args.preauri_loc)        
-    def_fiducial_file = join(args.template_MRI_dir, args.template_MRI_name, 
+    args.def_fiducial_file = join(args.template_MRI_dir, args.template_MRI_name, 
                              'bem', f'{args.template_MRI_name}-fiducials.fif')
-    remove(def_fiducial_file) if exists(def_fiducial_file) else None
-    unlink(def_fiducial_file) if islink(def_fiducial_file) else None
+    remove(args.def_fiducial_file) if exists(args.def_fiducial_file) else None
+    unlink(args.def_fiducial_file) if islink(args.def_fiducial_file) else None
     if args.fiducial_file in [None, '']:
-        args.fiducial_file = def_fiducial_file.replace('.fif', f'{args.preauri_loc}.fif')
+        args.fiducial_file = args.def_fiducial_file.replace('.fif', f'{args.preauri_loc}.fif')
     print(f'\nUsing {args.fiducial_file} as the template MRI fiducial.\n')
-    symlink(args.fiducial_file, def_fiducial_file)
+    symlink(args.fiducial_file, args.def_fiducial_file)
     print(args.template_MRI_dir, args.template_MRI_name, '\n')
 
     args.n_jobs            = cpu_count()-1  if not hasattr(args, 'n_jobs')             else int(args.n_jobs)    
@@ -74,5 +74,10 @@ def check_set_input_config(args):
     args.plot_lw           = 1.5            if not hasattr(args, 'plot_lw')            else args.plot_lw
     args.plot_titlecolor   = (.8,.9,.2)     if not hasattr(args, 'plot_titlecolor')    else args.plot_titlecolor
     args.plot_titlefsize   = 18             if not hasattr(args, 'plot_titlefsize')    else args.plot_titlefsize
+    args.figsize           = (15,4)         if not hasattr(args, 'figsize')            else args.figsize
+    
+    if not hasattr(args, 'snap_config'):
+        args.snap_config = dict(top=.999, bottom=0.0, left=-0.0, right=.999, wspace=-0.2, 
+                                         titlepad=-5, tight=True, nsnap=3, figsize=args.figsize)
 
     return args
