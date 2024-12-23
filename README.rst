@@ -111,12 +111,6 @@ Contributing
 Contributions are welcome! If you have suggestions or find bugs, please open an issue or submit a pull request.
 
 
-Citing pseudo-MRI engine
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-When using the software package in a publication, please cite the following article:
-
-
 
 
 
