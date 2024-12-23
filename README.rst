@@ -42,7 +42,7 @@ Set up a Python environment, for example as:
 
 .. code-block:: bash
 
-    conda activate < your environment>
+    conda activate <your_environment>
 
 Run to check and install all dependencies for the pseudo-MRI engine:
 
@@ -57,10 +57,11 @@ Check the installation:
     python pseudoMRI_engine.py --help
 
 
-   
+Preparation of a template MRI
+-----------------------------
 
-**Preparation of a template MRI:**
 Segment a template MRI, for example MNE152, using recon-all routine of FreeSurfer (or FastSurfer). Also compute head model and scalp surfaces using MNE-Python routines. Furthermore, the fiducial points for the template MRI can be identified using MNE-Python coregistration module and saved as FIFF file with an appropriate pattern from CrusHelix, Targus, and ITnotch.
+
 
 **How to use**
 
