@@ -54,7 +54,7 @@ from os import makedirs
 from datetime import datetime
 from mne import Report
 from utils.meginpy.pseudoMRI import pseudomriengine
-
+from utils.meginpy.utils import tic, toc
 #%% Set an HTML report
 report_dir  = join(args.pseudo_MRI_dir, args.pseudo_MRI_name, "report")
 makedirs(report_dir, exist_ok=True)
@@ -67,6 +67,7 @@ args.report.save(fname=args.report_file, open_browser=True,
                  overwrite=True, sort_content=False, verbose=args.verbose)
 
 #%% Run pseudomriengine
+tic()
 pseudomriengine(args.pseudo_MRI_name, args.pseudo_MRI_dir, args.headshape, 
                 args.template_MRI_name, args.template_MRI_dir, args.def_fiducial_file, 
                 dense_hsp=args.dense_hsp, mirror_hsps=args.mirror_hsps, 
@@ -85,6 +86,5 @@ pseudomriengine(args.pseudo_MRI_name, args.pseudo_MRI_dir, args.headshape,
                 rem_good_pts_idx=args.rem_good_pts_idx,  
                 nmax_Ctrl=args.nmax_Ctrl,
                 report=args.report, report_file=args.report_file, args=args)
-
-    
+toc()
     

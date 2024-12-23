@@ -174,3 +174,64 @@ def get_put_snaps(repMNE, f_RepMNE, title, section, tags, caption, add2report=Tr
             repMNE.save(fname=f_RepMNE, open_browser=open_browser, 
                         overwrite=True, sort_content=False, verbose=verb)
             print(f'Snaps added to report: {f_RepMNE}')
+            
+#%% Plot to check surface and digitization points alignment with anatomy (MRI)
+def plot_surf_anat_alignment_v2(wdata, Torig, destCtrl, warpedSurf, title=None, nslice=8, tol=2, side_leave='25%', 
+                                lw=1.5, titlecolor=(.8,.9,.2), titlefsize=18, cmap='gist_gray_r', zoom_in='10%',
+                                viewmodes = ['yz', 'xy', 'xz']):
+    zoom_in = -int(zoom_in[:-1])/100
+    side_leave = int(side_leave.replace('%', ''))/100
+    surf_rr_vox = apply_trans(np.linalg.inv(Torig), deepcopy(warpedSurf['rr'])*1000)
+    destCtrl_vox  = apply_trans(np.linalg.inv(Torig), deepcopy(destCtrl)*1000)
+    slice_idx =   np.linspace(int(wdata.shape[0]*side_leave), wdata.shape[0] - int(wdata.shape[0]*side_leave), nslice, dtype=int)
+    fig = plt.figure(num=title)
+    plt.suptitle(str(title))
+    nrow, ncol, nplot = len(viewmodes)*2, nslice//2, 0
+    for iview in range(len(viewmodes)):
+        viewmode = viewmodes[iview]
+        for jj in range(nslice):
+            nplot += 1
+            fig.add_subplot(nrow, ncol, nplot)
+            if viewmode=='yz':
+                plt.imshow(wdata[slice_idx[jj],:,:], cmap=cmap)
+                plt.tricontour(surf_rr_vox[:, 2], surf_rr_vox[:, 1], warpedSurf['tris'], surf_rr_vox[:, 0], 
+                                       levels=[slice_idx[jj]],  colors='r', linewidths=lw,   zorder=1)
+                destCtrl_vox2 = np.empty((0,2))
+                for ii in range(destCtrl_vox.shape[0]):
+                    tol = tol # slice
+                    if destCtrl_vox[ii,0] < slice_idx[jj]+tol and destCtrl_vox[ii,0] > slice_idx[jj]-tol:
+                        destCtrl_vox2 = np.vstack((destCtrl_vox2, destCtrl_vox[ii,1:]))
+                plt.scatter(destCtrl_vox2[:, 1], destCtrl_vox2[:, 0], color=(1,.5,0), marker='o', edgecolors='k')
+                plt.text(wdata[slice_idx[jj],:,:].shape[0]/2, wdata[slice_idx[jj],:,:].shape[1]/2, str(slice_idx[jj]), 
+                         **dict(ha='center', va='center', color=titlecolor, fontsize=titlefsize))
+                plt.margins(zoom_in)
+                plt.box(on=False);   plt.xticks([]);    plt.yticks([])
+            elif viewmode=='xy':
+                plt.imshow(wdata[:,slice_idx[jj],:], cmap=cmap)
+                plt.tricontour(surf_rr_vox[:, 2], surf_rr_vox[:, 0], warpedSurf['tris'], surf_rr_vox[:, 1], 
+                                       levels=[slice_idx[jj]],  colors='r', linewidths=lw,   zorder=1)
+                destCtrl_vox2 = np.empty((0,2))
+                for ii in range(destCtrl_vox.shape[0]):
+                    tol = tol # slice
+                    if destCtrl_vox[ii,1] < slice_idx[jj]+tol and destCtrl_vox[ii,1] > slice_idx[jj]-tol:
+                        destCtrl_vox2 = np.vstack((destCtrl_vox2, destCtrl_vox[ii,[0,2]]))
+                plt.scatter(destCtrl_vox2[:, 1], destCtrl_vox2[:, 0], color=(1,.5,0), marker='o', edgecolors='k')
+                plt.text(wdata[slice_idx[jj],:,:].shape[0]/2, wdata[slice_idx[jj],:,:].shape[1]/2, str(slice_idx[jj]), 
+                         **dict(ha='center', va='center', color=titlecolor, fontsize=titlefsize))
+                plt.margins(zoom_in) # 10% zoom in
+                plt.box(on=False);   plt.xticks([]);    plt.yticks([])
+            elif viewmode=='xz':
+                plt.imshow(wdata[:,:,slice_idx[jj]].T, cmap=cmap)
+                plt.tricontour(surf_rr_vox[:, 0], surf_rr_vox[:, 1], warpedSurf['tris'], surf_rr_vox[:, 2], 
+                                       levels=[slice_idx[jj]],  colors='r', linewidths=lw,   zorder=1)
+                destCtrl_vox2 = np.empty((0,2))
+                for ii in range(destCtrl_vox.shape[0]):
+                    tol = tol # slice
+                    if destCtrl_vox[ii,2] < slice_idx[jj]+tol and destCtrl_vox[ii,2] > slice_idx[jj]-tol:
+                        destCtrl_vox2 = np.vstack((destCtrl_vox2, destCtrl_vox[ii,[0,1]]))
+                plt.scatter(destCtrl_vox2[:, 0], destCtrl_vox2[:, 1], color=(1,.5,0), marker='o', edgecolors='k')
+                plt.text(wdata[slice_idx[jj],:,:].shape[0]/2, wdata[slice_idx[jj],:,:].shape[1]/2, str(slice_idx[jj]), 
+                         **dict(ha='center', va='center', color=titlecolor, fontsize=titlefsize))
+                plt.margins(zoom_in) # 10% zoom in
+                plt.box(on=False);   plt.xticks([]);    plt.yticks([])
+    return fig

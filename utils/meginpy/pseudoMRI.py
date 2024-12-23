@@ -295,7 +295,7 @@ def shift_destCtrl_inward_to_maintain_realistic_scalp2hsp_dist(destCtrl, trans_r
     return destCtrl4
 
 #%%
-def my_warp_transform(p, q, reg=1e-3, reg_mode=2, comment='', wtol=1e-06, return_reg=False):
+def my_warp3d_trans(p, q, reg=1e-3, reg_mode=2, comment='', wtol=1e-06, return_reg=False):
     N = p.shape[0]
     px = np.tile(p[:,0].reshape((p[:,0].shape[0], 1)), (1, N))
     py = np.tile(p[:,1].reshape((p[:,1].shape[0], 1)), (1, N))
@@ -336,7 +336,7 @@ def my_warp_transform(p, q, reg=1e-3, reg_mode=2, comment='', wtol=1e-06, return
         return W, A, e
 
 #%% 
-def my_warp_lm(r, A, W, p):
+def my_warp_src(r, A, W, p):
     rw = np.dot(r, A[:3,:3])
     rw = rw + A[3,:]
     n_p = p.shape[0]
@@ -503,7 +503,7 @@ def apply_warp_to_anatomy(srcPts, destPts, mridata, t1_fname=None, Torig=None, b
     
         mgh = nib.MGHImage(t1.dataobj, t1.affine)
         vox2ras_tkr = mgh.header.get_vox2ras_tkr()
-        Torig = vox2ras_tkr # it transforms voxels directly to the FreeSurfer MRI surface RAS coordinate frame (MRI cordsys in MNE)
+        Torig = vox2ras_tkr 
         vox2ras_tkr_inv = np.linalg.inv(vox2ras_tkr)
         Torig_inv = vox2ras_tkr_inv
         miscs = dict()
@@ -518,9 +518,9 @@ def apply_warp_to_anatomy(srcPts, destPts, mridata, t1_fname=None, Torig=None, b
     print('Using %d vox/it for warping, increasing block_size would fasten the process but requires more memory.'%block_size)
     srcPts_vox  = mne.transforms.apply_trans(np.linalg.inv(Torig), srcPts*1000)
     destPts_vox = mne.transforms.apply_trans(np.linalg.inv(Torig), destPts*1000)
-    W_vox, A_vox, e_vox, regWtransVox  = my_warp_transform(srcPts_vox, destPts_vox, reg=reg, reg_mode=reg_mode, 
+    W_vox, A_vox, e_vox, regWtransVox  = my_warp3d_trans(srcPts_vox, destPts_vox, reg=reg, reg_mode=reg_mode, 
                                                             comment='Estimating Wtrans for vox..', return_reg=True)
-    W_vox_inv, A_vox_inv, e_vox_inv, reginvWtransVox = my_warp_transform(destPts_vox, srcPts_vox, reg=reg, reg_mode=reg_mode, 
+    W_vox_inv, A_vox_inv, e_vox_inv, reginvWtransVox = my_warp3d_trans(destPts_vox, srcPts_vox, reg=reg, reg_mode=reg_mode, 
                                                             comment='Estimating inv. Wtrans for vox..', return_reg=True)
     miscs['e_vox']     = e_vox
     miscs['e_vox_inv'] = e_vox_inv
@@ -541,10 +541,11 @@ def apply_warp_to_anatomy(srcPts, destPts, mridata, t1_fname=None, Torig=None, b
             ix1 = min(ix0 - 0 + BLOCK_SIZE, nVoxels)
             xv, yv, zv = np.unravel_index(np.arange(ix0,ix1), sizeMri, order='F')
             rv = np.vstack(( np.vstack((xv, yv)), zv)).T
-            if n_jobs:
-                rv_inv = my_warp_lm(rv, A_vox_inv, W_vox_inv, destPts_vox) + rv
+            if n_jobs==1:
+                rv_inv = my_warp_src(rv, A_vox_inv, W_vox_inv, destPts_vox) + rv
             else:
-                print('FIX IT for parallel processing')
+                print('Parallel processing is not supported yet; stay tuned.')
+                rv_inv = my_warp_src(rv, A_vox_inv, W_vox_inv, destPts_vox) + rv
             rv_inv = np.round(rv_inv)
             iOutside = np.where( np.sum( np.logical_or((rv_inv < 0), (rv_inv > np.tile(np.array(sizeMri)-1, (rv_inv.shape[0], 1)))), axis=1) > 0)[0]
             rv_inv[iOutside,:] = 1
@@ -615,9 +616,6 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
 
         
     surf2warp = deepcopy(template_headsurf)
-    # viz.myMlabPoint3d(all_hsps, newfig=1, scale_factor=0.005, color=(0,1, 0))
-    # viz.myMlabPoint3d(hpis_hsps, newfig=0, scale_factor=0.003, color=(1,0, 0))
-    # viz.myMlabPoint3d(surf2warp['rr'], newfig=0, scale_factor=0.0003, color=(0,1, 0))
     hpis_hsps_good = find_good_HSPs(hpis_hsps, surf2warp, fiducial_file, above_thrs=above_thrs, 
                                     min_rej_percent=dig_reject_min_max[0], 
                                     max_rej_percent=dig_reject_min_max[1], toplot=toplot, 
@@ -640,24 +638,9 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
     print('\nNo. of HSPs = %s \nNo. of HSPs used = %s \nIso_score = %.2f'%(all_hsps.shape[0], total_good_points, iso_val))
     print('HPI coils locations were not used.') if not use_hpi else None
     
-    # estimate_dense_HSPs = True if (total_good_points<50 or iso_val<0.80) and dense_hsp else False
-    
-    # if estimate_dense_HSPs:
-    #     print('\nEstimating dense HSPs...')
-    #     # FIX IT: check if len(all_hsps)<50 and non-uniformly distributed, 
-    #     #         then read dense_headshape_file (if exist) OR estimate here a dense hsp file using ----
-    #     digpoints_dense, _, _, _ = apply_warp_to_find_dense_headshape(isotrak_file, outer_skinP_file=None, transfileP=None, 
-    #                                             out_headshape_fname=isotrak_file.replace('.fif', '_dense_headshape.txt'), 
-    #                                             toplot=toplot, toplot_final=False, below_thres=0.005, max_out_percent=5,
-    #                                             ds_warped_mesh=3, TSPTrans_reg=1e-5, use_sphere_fit=True, verbose=True)
-    #     hpis_hsps2warp_orig = deepcopy(hpis_hsps2warp)
-    #     hpis_hsps2warp      = deepcopy(digpoints_dense)
-    # else:
     hpis_hsps2warp_orig = np.empty((0,3))
     hpis_hsps2warp      = hpis_hsps2warp
     
-    # In most of the case head is symetric from left to write (ref ???, check literatures or validate with available MRI head surfaces)
-    # so the concatenating the mirror HSP left <-> right would add extra points and make the HSP denser (TBV= to be validated)
     apply_mirroring = mirror_hsps and hpis_hsps2warp.shape[0]<40
     if apply_mirroring:
         print('\nNOTE: Mirroring HSPs to make it denser...')
@@ -665,8 +648,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
         hpis_hsps2warp_reflect = deepcopy(hpis_hsps2warp) * (-1,1,1)
         hpis_hsps2warp = np.vstack((hpis_hsps2warp_true, hpis_hsps2warp_reflect))
     
-    # to avoid toooo dense points, downsample to 100-300 points only
-    # nmax_Ctrl      = 150
+    # to avoid too dense points, downsample to 100-300 points only
     nmax_Ctrl      = min(nmax_Ctrl-(3 + hpis_hsps2warp_orig.shape[0]), hpis_hsps2warp.shape[0]) # 3 fids would be necessarily available, so max required are nmax_Ctrl-3
                                                                                                 # Also, while using estimated dense HSPs, the original HSPs will be concatenated later 
     selidx         = np.linspace(0, hpis_hsps2warp.shape[0]-1, nmax_Ctrl, dtype=int)
@@ -684,7 +666,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
     iso_score_final = IsoScore.IsoScore(deepcopy(all_hsps2warp).T if all_hsps2warp.shape[0]==3 else deepcopy(all_hsps2warp))
     print(('\nThe final number of HSP used for warping = %d \niso_score = %.2f'%(digpoints.shape[0], iso_score_final)).upper())
     
-    #% % Find warp tranform -------------------------------------------------------------------------------------------------
+    #% % Compute warping transform
     # The three srcCtrl points for isotrak fids would be three MRI surface fids (from fiducial file)
     fids_ras, fids_LNR, fids_LNR_dict = get_fiducial_LNR(fiducial_file)
     srcCtrl_fids = deepcopy(fids_LNR)
@@ -695,12 +677,18 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
     above_thrs_idx = np.where(mesh_pos[:,2] > (fids_LNR[:,2].min()-above_thrs))[0]
     mesh_pos       = mesh_pos[above_thrs_idx, :]
     if toooplot:
-        viz.myMlabTriagularMesh(surf2warp['rr'], surf2warp['tris'], toplot=True, newfig=1, representation='s', opacity=0.2, axis=True)
-        viz.myMlabPoint3d(mesh_pos,   newfig=0, scale_factor=0.0003, color=(0,1, 0))
-        viz.myMlabPoint3d(srcCtrl_fids, newfig=0, scale_factor=0.005, color=(0,0, 1))
-        viz.myMlabPoint3d(digpoints[:3], newfig=0, scale_factor=0.005, color=(0,1, 1))
-        viz.myMlabPoint3d(digpoints,   newfig=0, scale_factor=0.005, color=(0.5,1, 1))
-        viz.myMlabPoint3d(all_hsps,  newfig=0, scale_factor=0.002, color=(1,0, 0))
+        viz.myMlabTriagularMesh(surf2warp['rr'], surf2warp['tris'], representation='s', opacity=0.2, axis=True, color=(.7,.7,.7))
+        viz.myMlabPoint3d(mesh_pos,     newfig=0, scale_factor=0.0003,  color=(0,1, 0))
+        viz.myMlabPoint3d(srcCtrl_fids, newfig=0, scale_factor=0.005,   color=(0,0, 1))
+        viz.myMlabPoint3d(digpoints[:3],newfig=0, scale_factor=0.005,   color=(0,1, 1))
+        viz.myMlabPoint3d(digpoints,    newfig=0, scale_factor=0.005,   color=(0.5,1, 1))
+        viz.myMlabPoint3d(all_hsps,     newfig=0, scale_factor=0.002,   color=(1,0, 0))
+    if report!=None and report_file!=None:
+        viz.get_put_snaps(report, report_file, title='All aligned before detecting control points', section='Control points', tags=('warping',), 
+              caption="Headshape points and template scalp surface aligned before identifying the control point pairs", 
+              add2report=True, save=True, fig3d=gcf(),  image_format='png', replace=True, **args.snap_config)
+        close(gcf())
+    
     closest_vert_pos_rest, closest_vert_idx_rest, closest_vert_dist_rest = np.empty((0,3)), np.empty((0,1), dtype=int), np.empty((0,1))
     for ii in range(3, digpoints.shape[0]):
         closest_vert_pos, idx, closest_vert_dist = find_closest_node_dist(digpoints[ii,:], mesh_pos,  multipy2dist=1000)
@@ -711,23 +699,21 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
     # Append all for fids and hpi_hsp
     closest_vert_pos_all   = np.vstack((srcCtrl_fids, closest_vert_pos_rest))
     closest_vert_dist_all = np.hstack((srcCtrl_fids_dist, closest_vert_dist_rest.flatten())).T
-    # viz.myMlabPoint3d(closest_vert_pos_all, newfig=0, scale_factor=0.002, color=(0,0, 0))
     print('\nDestCtrl to SrcCtrl min, mean, max dist. = %.2f mm, %.2f mm, %.2f mm\n'\
           %(closest_vert_dist_all.min(),closest_vert_dist_all.mean(), closest_vert_dist_all.max()))
-    # ax, _ = meginpy.viz.violin_plus_box_plot(closest_vert_dist_all, fig_face='#d0ecf4', ax_face='#d0ecf4', vioW=.8, boxW=.2)
-    # IQR, outlrs_indx, outlrs_prcnt, \
-    #     extremes_idx, extremes_prcnt = find_outliers_extreme_percentage(closest_vert_dist_all, percentile=[25,75],whis_outliers=1.5, 
-    #                                                                     whis_extreme=3.0,res_round_by=2, toprint=False)
     srcCtrl  = deepcopy(closest_vert_pos_all) # source control points (p)
     destCtrl = deepcopy(digpoints)            # destination contrl points (q)
     if toooplot:
         figg = viz.myMlabTriagularMesh(surf2warp['rr'], surf2warp['tris'], toplot=True, newfig=True, representation='s', color=(.751,.75,0.75), opacity=.3, axis=False)
         viz.myMlabPoint3d(srcCtrl, newfig=False, scale_factor=0.004, color=(1,0,0), axis=False) 
         viz.myMlabPoint3d(destCtrl, newfig=False, scale_factor=0.004, color=(0,1,0), axis=False)
-        figg.scene.light_manager.light_mode = "vtk"
-        figg.scene.light_manager.number_of_lights = 5
-    print('Computing the warping transform using linear solver with %d source ' \
-          'and %d destination control points (with regularization=%s)...'%(srcCtrl.shape[0], destCtrl.shape[0], Wreg_est))
+        if report!=None and report_file!=None:
+            viz.get_put_snaps(report, report_file, title='Control points pairs', section='Control points', tags=('warping',), 
+                  caption=f" {len(srcCtrl)} control point pairs (red: source (scalp), green: destination (digitization))", 
+                  add2report=True, save=True, fig3d=figg,  image_format='png', replace=True, **args.snap_config)
+            close(figg); del figg
+    print(f'Computing the warping transform using linear solver with {srcCtrl.shape[0]} source ' \
+          f'and {destCtrl.shape[0]} destination control points (with regularization = {Wreg_est}).')
 
     if destHSPsShiftInwrd > 0: 
         destCtrl_new = shift_destCtrl_inward_to_maintain_realistic_scalp2hsp_dist(deepcopy(destCtrl), 
@@ -737,26 +723,27 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
     else:
         destCtrl_new = deepcopy(destCtrl)
     
-    W, A, e, Wreg_est2 = my_warp_transform(srcCtrl, destCtrl_new, reg=Wreg_est, comment='Estimating Wtran for surfs..', 
+    W, A, e, Wreg_est2 = my_warp3d_trans(srcCtrl, destCtrl_new, reg=Wreg_est, comment='Estimating Wtran for surfs..', 
                                             wtol=wtol, return_reg=True) # Note that this W, A, e are for RAS coordsys
     print(np.mean(np.abs(deepcopy(W)), axis=0), '\n\n', A, '\n\n', e)
-    # print(warp_reg, e)
     
     #% % Warp the template head surface and check the distance between surface and HSPs -------------------------------------
     mesh_pos = surf2warp['rr']
-    warpedSurf_verts = my_warp_lm(deepcopy(mesh_pos), A, W, srcCtrl) + deepcopy(mesh_pos)
+    warpedSurf_verts = my_warp_src(deepcopy(mesh_pos), A, W, srcCtrl) + deepcopy(mesh_pos)
     warpedSurf       = deepcopy(surf2warp)
     warpedSurf['rr'] = deepcopy(warpedSurf_verts)
     if toooplot:
-        viz.myMlabTriagularMesh(surf2warp['rr'], surf2warp['tris'], toplot=True, newfig=True, representation='s', color=(1,.5,0), opacity=0.2)
-        viz.myMlabPoint3d(srcCtrl, newfig=False, scale_factor=0.002, color=(1,.5,0), opacity=.9) 
-        viz.myMlabTriagularMesh(warpedSurf['rr'], warpedSurf['tris'], toplot=True, newfig=False, representation='s', color=(0,1,0), opacity=0.3)
-        viz.myMlabPoint3d(destCtrl, newfig=False, scale_factor=0.004, color=(0,1,0), opacity=.9)
-        # figg =viz.myMlabTriagularMesh(warpedSurf['rr'], warpedSurf['tris'], toplot=True, newfig=True, representation='s', color=(.751,.75,0.75), opacity=.3, axis=False, lw=.0000001)
-        # viz.myMlabPoint3d(srcCtrl, newfig=False, scale_factor=0.004, color=(1,0,0), axis=False) 
-        # viz.myMlabPoint3d(destCtrl, newfig=False, scale_factor=0.004, color=(0,1,0), axis=False)  
-        figg.scene.light_manager.light_mode = "vtk"
-        figg.scene.light_manager.number_of_lights = 5
+        viz.myMlabTriagularMesh(surf2warp['rr'], surf2warp['tris'], representation='s', color=(.7,.7,.7), opacity=0.2)
+        viz.myMlabPoint3d(srcCtrl, newfig=False, scale_factor=0.002, color=(1,0,0), opacity=.8) 
+        viz.myMlabTriagularMesh(warpedSurf['rr'], warpedSurf['tris'], newfig=False, representation='s', color=(0,1,0), opacity=0.2)
+        viz.myMlabPoint3d(destCtrl, newfig=False, scale_factor=0.003, color=(0,1,0), opacity=.8)
+        gcf().scene.light_manager.light_mode = "vtk"
+        gcf().scene.light_manager.number_of_lights = 5
+        if report!=None and report_file!=None:
+            viz.get_put_snaps(report, report_file, title='Warped scalp surface', section='Warped surfaces', tags=('warping',), 
+                  caption="Warped scalp surface (green)", 
+                  add2report=True, save=True, fig3d=gcf(),  image_format='png', replace=True, **args.snap_config)
+            close(gcf())
         
     closest_vert_pos_all2, closest_vert_dist_all2, mesh_pos2 = np.empty((0,3)), np.empty((0,1)),  deepcopy(warpedSurf['rr'])
     for ii in range(digpoints.shape[0]):
@@ -764,19 +751,14 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
         closest_vert_dist_all2 = np.vstack((closest_vert_dist_all2, find_closest_node_dist(digpoints[ii,:], mesh_pos2,  multipy2dist=1000)[2]))
     print('\nIsotrak to warped-surface distance min, mean, max dist. = %.2f mm, %.2f mm, %.2f mm\n'\
           %(closest_vert_dist_all2.min(),closest_vert_dist_all2.mean(), closest_vert_dist_all2.max()))
-    del warpedSurf_verts, closest_vert_pos_all2, closest_vert_dist_all2, mesh_pos2 #, warpedSurf
+    del warpedSurf_verts, closest_vert_pos_all2, closest_vert_dist_all2, mesh_pos2 
     
-    #% % Create subject's directory to write warped results + Write the warping transform -----------------------------------
-    subject_directory = '%s/%s/'%(pseudo_subjects_dir, pseudo_subject)
+    #% % Create subject's directory to write warped results + Write the warping transform 
+    subject_directory = f'{pseudo_subjects_dir}/{pseudo_subject}/'
     makedirs(subject_directory, exist_ok=True)
-    makedirs(subject_directory + 'mri', exist_ok=True)
-    makedirs(subject_directory + 'bem', exist_ok=True)
-    makedirs(subject_directory + 'surf', exist_ok=True)
-    makedirs(subject_directory + 'label', exist_ok=True)
-    makedirs(subject_directory + 'src', exist_ok=True)
-    makedirs(subject_directory + 'coreg', exist_ok=True)
-    makedirs(subject_directory + 'warped_figs', exist_ok=True)
-    misc_comments = 'HSPs mirrored=%s\t'%str(apply_mirroring)
+    for dir_ in ['mri', 'bem', 'surf', 'label', 'src', 'coreg', 'warped_figs']:
+        makedirs(subject_directory + dir_, exist_ok=True)
+    misc_comments = 'HSPs mirrored = %s\t'%str(apply_mirroring)
     config_fname = write_mri_warping_config(templates_dir, isotrak_file.split('/', maxsplit=7)[-1], template, 
                              pseudo_subjects_dir, pseudo_subject, srcCtrl, destCtrl, W, A, e, 
                              coord_frame='MRI (surface RAS)',  misc_comments=misc_comments, return_fname=True)
@@ -787,7 +769,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
     #% % Find source mri, bems, src, etc. paths
     src_paths = mne.coreg._find_mri_paths(subject=template, skip_fiducials=False, subjects_dir=templates_dir)
     
-    #% % Warp fiducials and compute new transform and write files -----------------------------------------------------------
+    #% % Warp fiducials and compute new transform and write files 
     mne.utils.logger.info("Warping fiducials %s -> %s and computing new transform", template, pseudo_subject)
     
     # Get the template MRI fiducials >> Warp fiducials >> Write the warped fiducial file (in RAS coordsys)...
@@ -800,7 +782,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
         for d in template_fiducials[0]:
             if d['ident'] == fiff_id:
                 template_fiducials_m[fid_labels[fiff_id-1]]        = dict(d.items())['r']
-                template_fiducials_m_warped[fid_labels[fiff_id-1]] = (my_warp_lm( deepcopy(dict(d.items())['r']).reshape(1,3), \
+                template_fiducials_m_warped[fid_labels[fiff_id-1]] = (my_warp_src( deepcopy(dict(d.items())['r']).reshape(1,3), \
                                                                             A, W, srcCtrl ) + deepcopy(dict(d.items())['r']).reshape(1,3)).flatten()
     
     warped_fids2write = deepcopy(template_fiducials) # just to copy the fiducial structure
@@ -809,25 +791,23 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
             if d['ident'] == fiff_id:
                 warped_fids2write[0][fiff_id-1]['r']  = template_fiducials_m_warped[fid_labels[fiff_id-1]]  
     fiducial_file_warped = '%s/bem/%s-fiducials.fif'%(subject_directory, pseudo_subject)
-    mne.io.write_fiducials(fiducial_file_warped, warped_fids2write[0], warped_fids2write[1], verbose=None)
-    print('\nfiducial file for pMRI is written:  %s'%fiducial_file_warped)  
+    mne.io.write_fiducials(fiducial_file_warped, warped_fids2write[0], warped_fids2write[1], verbose=args.verbose)
+    print('\nfiducial file for pMRI was written as %s'%fiducial_file_warped)  
     
     # Compute and write the new trans for warped surfaces
     trans_ras2neuromag_warped, trans_neuromag2ras_warped = get_ras_to_neuromag_trans_from_fiducial_file(fiducial_file_warped)
-    # trans_temp = mne.read_trans(  glob2.glob('%s/%s/**/*-trans.fif'%(templates_dir, template))[0]  ) # to find the trans structure
-    # trans_temp['trans'] = trans_neuromag2ras_warped
     trans_temp = mne.transforms.Transform(4, 5, trans_neuromag2ras_warped)
     trans_file_warped = '%s/coreg/%s-trans.fif'%(subject_directory, pseudo_subject)
     mne.write_trans(trans_file_warped, trans_temp)
     print('\ntrans file for pMRI is written:  %s'%trans_file_warped)  
     
-    #% % Warp bem and brain surfaces and write files ------------------------------------------------------------------------
-    mne.utils.logger.info("Warping bem and brain surfaces:  %s -> %s", template, pseudo_subject)
+    #% % Warp headmodel and brain surfaces and write files 
+    mne.utils.logger.info("Warping headmodel and brain surfaces:  %s -> %s", template, pseudo_subject)
     # Read different surfaces of the template reconstructed by Freesurfer 
     SurfaceFile_names, Surfaces, Surface_scaling = my_get_SurfaceFile_v2(templates_dir, template, 
                                                                           read_files=True, read_metadata=False)
     
-    # Apply warping on the surfaces using the warping transform >> write the warped surface (in RAS coordsys)
+    # Warp these surfaces and write in RAS coordsys system
     figname_final ='R> P:%s'%(pseudo_subject)
     SurfWarped = dict()
     viz.myMlabPoint3d(destCtrl, scale_factor=0.005, figname=figname_final, toplot=toplot, newfig=True) 
@@ -839,15 +819,22 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
         SurfNew = dict()
         SurfNew['Faces']    = Surface['Faces'] if 'Faces' in Surface else Surface['tris']
         Surface_verts       = Surface['Vertices'] if 'Vertices' in Surface else Surface['rr']
-        SurfNew['Vertices'] = my_warp_lm(deepcopy(Surface_verts), A, W, srcCtrl) + deepcopy(Surface_verts)
-        del Surface_verts#, Surface_verts_nm
-        if surf in ['/bem/watershed/%s_inner_skull_surface'%template, '/bem/watershed/%s_outer_skin_surface'%template, 
-                    '/bem/watershed/%s_brain_surface'%template, #'/surf/lh.pial', '/surf/rh.pial'#, 
-                    '/surf/lh.white', '/surf/rh.white', '/bem/%s-head-dense.fif'%template,
+        SurfNew['Vertices'] = my_warp_src(deepcopy(Surface_verts), A, W, srcCtrl) + deepcopy(Surface_verts)
+        del Surface_verts
+        if surf in [f'/bem/watershed/{template}_inner_skull_surface', 
+                    f'/bem/watershed/{template}_outer_skin_surface', 
+                    f'/bem/watershed/{template}_brain_surface',
+                    '/surf/lh.white', '/surf/rh.white', 
+                    f'/bem/{template}-head-dense.fif',
                     ]:
             viz.myMlabTriagularMesh(SurfNew['Vertices'], SurfNew['Faces'], toplot=toplot, newfig=False, 
                                             figname=figname_final, representation='surface', opacity=0.3)
             view(azimuth=0, elevation=90) if toplot else None
+        if report!=None and report_file!=None:
+            viz.get_put_snaps(report, report_file, title='pseudo-MRI surfaces', section='Warped surfaces', tags=('pseudoMRI',), 
+                  caption="Warped head and cortical surface", 
+                  add2report=True, save=True, fig3d=gcf(),  image_format='png', replace=True, **args.snap_config)
+            close(gcf())
         
         SurfNew_fname = '%s%s'%(subject_directory, surf.replace(template, pseudo_subject))
         print('Writing the warped surface file as: \n%s'%SurfNew_fname)
@@ -857,7 +844,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
             surf_temp[0]['rr']    = SurfNew['Vertices']
             surf_temp[0]['nn']    = [] 
             surf_temp[0]['sigma'] = 0.33
-            mne.write_bem_surfaces(SurfNew_fname, surf_temp, overwrite=True, verbose=True)
+            mne.write_bem_surfaces(SurfNew_fname, surf_temp, overwrite=True, verbose=args.verbose)
             del surf_temp
         else:
             mne.surface.write_surface(SurfNew_fname, SurfNew['Vertices']*Surface_scaling[surf], SurfNew['Faces'], 
@@ -869,6 +856,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
     try:
         utils.make_surfaces_soft_links3(pseudo_subjects_dir, pseudo_subject, surfs_from='mri2surf')
     except Exception as exerrr:
+        print(exerrr)
         utils.make_surfaces_soft_links(pseudo_subjects_dir, pseudo_subject)
     
     # copy/duplicate the files that does not require warping  (CONFIRM IT)
@@ -878,14 +866,12 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
         dstfile = src_name.format(subjects_dir=pseudo_subjects_dir, subject=pseudo_subject)
         copyfile(srcfile, dstfile)
         
-    #% % Warp source spaces--------------------------------------------------------------------------------------------------
+    #% % Warp source spaces
     mne.utils.logger.info("Warping source space:  %s -> %s", template, pseudo_subject)
-    
     for src_name in src_paths['src']:
         print(src_name)
         src = src_name.format(subjects_dir=templates_dir, subject=template)
         dst = src_name.format(subjects_dir=pseudo_subjects_dir, subject=pseudo_subject)
-    
         # read and warp the source space [in m]
         sss = mne.source_space.read_source_spaces(src)
         add_dist = False
@@ -893,20 +879,17 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
             ss['subject_his_id'] = pseudo_subject
             # ss['rr'] *= scale
             verts_pos =  deepcopy(ss['rr'])
-            ss['rr'] = my_warp_lm(deepcopy(verts_pos), A, W, srcCtrl) + deepcopy(verts_pos)
+            ss['rr'] = my_warp_src(deepcopy(verts_pos), A, W, srcCtrl) + deepcopy(verts_pos)
             del verts_pos
         if add_dist:
             dist_limit = np.inf
             mne.utils.logger.info("Recomputing distances, this might take a while")
             mne.source_space.add_source_space_distances(sss, dist_limit, n_jobs=n_jobs)
+        mne.source_space.write_source_spaces(dst, sss, overwrite=True, verbose=args.verbose)
     
-        mne.source_space.write_source_spaces(dst, sss, overwrite=True, verbose=True)
-    
-    #% % Warp label ---------------------------------------------------------------------------------------------------------
+    #% % Warp labels
     mne.utils.logger.info("Warping labels:  %s -> %s", template, pseudo_subject)
     viz.myMlabTriagularMesh(warpedSurf['rr'], warpedSurf['tris'], toplot=toplot, newfig=True, representation='s', opacity=0.2)
-    
-    # find labels path....
     lbl_dir = join(templates_dir, template, 'label')
     pattern = None
     if pattern is None:
@@ -918,30 +901,25 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
                 label_paths.append(thispath)
     else:
         label_paths = [relpath(thispath, lbl_dir) for thispath in iglob(pattern)]
-    
     # apply warping ....
     src_root = join(templates_dir, template, 'label')
     dst_root = join(subject_directory, 'label')
-    
     # warp labels
     for fname in label_paths:
         dst = join(dst_root, fname)
-    
         dirname_ = dirname(dst)
         if not exists(dirname_):
             makedirs(dirname_)
-    
         src = join(src_root, fname)
         l_old = mne.label.read_label(src)
         # pos = l_old.pos * scale
         print('warping... %s.label'%l_old.name)
-        pos = my_warp_lm(deepcopy(l_old.pos), A, W, srcCtrl) + deepcopy(l_old.pos)
+        pos = my_warp_src(deepcopy(l_old.pos), A, W, srcCtrl) + deepcopy(l_old.pos)
         viz.myMlabPoint3d(deepcopy(pos), scale_factor=0.0001,  newfig=False, toplot=toplot)
         l_new = mne.label.Label(l_old.vertices, pos, l_old.values, l_old.hemi,
                       l_old.comment, subject=pseudo_subject, name=l_old.name,
                       filename=l_old.filename.replace(templates_dir, pseudo_subjects_dir).replace(template, pseudo_subject))
         l_new.save(dst)
-    
     # Copy .annot file and .ctab, as they are do not have any position info so no warping is required
     annot_list = glob2.glob('%s/%s/label/*.annot'%(templates_dir, template))
     ctab_list  = glob2.glob('%s/%s/label/*.ctab'%(templates_dir, template))
@@ -949,8 +927,8 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
     for annot_ctab_file in annot_ctab_list:
         copyfile(annot_ctab_file, annot_ctab_file.replace(templates_dir, pseudo_subjects_dir).replace(template, pseudo_subject))
     
-    #% % Warp anatomy -------------------------------------------------------------------------------------------------------
-    viz.arrange_pyplot_font_etc(f_size=pyplot_fsize)
+    #% % Warp anatomy
+    # viz.arrange_pyplot_font_etc(f_size=pyplot_fsize)
     if warp_anatomy:
         print('\n')
         mne.utils.logger.info("Warping anatomy:  %s -> %s", template, pseudo_subject)
@@ -963,47 +941,40 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
             for item, mrif in product(which_mri,src_paths['mri']):
                 mris2warp.append(mrif) if mrif.endswith(item) else None
         for src_mri_fname in mris2warp:  
-            print('\nwarping... %s ---> for %s'%(src_mri_fname, pseudo_subject))
+            print('\nwarping... %s for %s'%(src_mri_fname, pseudo_subject))
             warped_mri_fname = src_mri_fname.replace( templates_dir, pseudo_subjects_dir ).replace( template, pseudo_subject )
             wdata, miscs = apply_warp_to_anatomy(deepcopy(srcCtrl), deepcopy(destCtrl), mridata=None, t1_fname=src_mri_fname, 
                                                            Torig=None, block_size=blocksize, reg=Wreg_apply, reg_mode=2, 
-                                                           toplot_final=False, 
-                                                           warped_surf=None, n_jobs=1, resample=False, rs_voxel_sizes=[.5,.5,.5])
+                                                           toplot_final=False, warped_surf=None, n_jobs=args.n_jobs, 
+                                                           resample=False, rs_voxel_sizes=[.5,.5,.5])
             add_line_to_file(config_fname, "***%s***\n"%warped_mri_fname.replace(pseudo_subjects_dir, ''))
             add_line_to_file(config_fname, "Reguln applied to estimate Wtrans for vox \t= %s\n"%miscs['regWtransVox'])
             add_line_to_file(config_fname, "Bending energy in estimating Wtrans for vox \t= %s\n"%miscs['e_vox'])
             add_line_to_file(config_fname, "Reguln applied to estimate inv Wtrans for vox \t= %s\n"%miscs['reginvWtransVox'])
             add_line_to_file(config_fname, "Bending energy in estimating inv Wtrans for vox = %s\n"%miscs['e_vox_inv'])
-
-            if not wdata is None:
-                if save_pmri_plot:
-                    # plot the warped MRI and check alignment with warped surface and destCtrl (HSPs) >> save for cross-checking later
-                    viz.plot_surf_anat_alignment_v2(wdata, miscs['Torig'], destCtrl, warpedSurf, 
-                                                 title= warped_mri_fname.replace( pseudo_subjects_dir, '' ), zoom_in=plot_zoom_in,
-                                                 nslice=plot_nslice, tol=plot_tol, side_leave=plot_side_leave, lw=plot_lw,  
-                                                 titlecolor=plot_titlecolor, titlefsize=plot_titlefsize)
-                    plt.show();     plt.pause(1);     plt.get_current_fig_manager().full_screen_toggle(); plt.pause(.5)
-                    plt.subplots_adjust(top=0.999,bottom=0.025,left=0.1,right=0.9,hspace=0.0,wspace=-0.0);   plt.pause(.5)
-                    plt.savefig('%s/%s/warped_figs/%s-%s.png'%(pseudo_subjects_dir, pseudo_subject, pseudo_subject, 
-                                                               warped_mri_fname.split('/')[-1][:-4]),
-                                dpi=None, facecolor='w', edgecolor='w', orientation='portrait', format=None,
-                                transparent=False, bbox_inches=None, pad_inches=0.1, metadata=None); plt.pause(.5)
-                
+            if wdata is not None:
+                fig = viz.plot_surf_anat_alignment_v2(wdata, miscs['Torig'], destCtrl, warpedSurf, zoom_in=plot_zoom_in,
+                                                title= warped_mri_fname.replace( pseudo_subjects_dir, '' ), 
+                                                nslice=plot_nslice, tol=plot_tol, side_leave=plot_side_leave, lw=plot_lw,  
+                                                titlecolor=plot_titlecolor, titlefsize=plot_titlefsize)
+                plt.show();     plt.pause(.5);     plt.get_current_fig_manager().full_screen_toggle(); plt.pause(.5)
+                plt.subplots_adjust(top=0.999,bottom=0.025,left=0.1,right=0.9,hspace=0.0,wspace=-0.0); plt.pause(.5)
+                if report!=None and report_file!=None:
+                    report.add_figure(fig, title=f"pseudo-MRI's {src_mri_fname.split('/')[-1]}",
+                          caption=join(f"../{pseudo_subject}/mri/{src_mri_fname.split('/')[-1]}"),
+                          image_format=None, tags=('pseudoMRI',), replace=True, section='Warped anatomy')
+                    report.save(fname=report_file, open_browser=False, overwrite=True, sort_content=False, verbose=args.verbose)
                 # Save the warped MRI file
                 makedirs(dirname(warped_mri_fname), exist_ok=True)
                 warped_mri_affine = deepcopy(miscs['mriobj'].affine)
                 warped_mri_header = deepcopy(miscs['mriobj'].header)
-                # write2format = ['.mgz'] #, '.nii']
                 for out_format in write2format:
                     if out_format=='.mgz':
                         mri_warped = nib.freesurfer.mghformat.MGHImage(deepcopy(wdata), warped_mri_affine, warped_mri_header)
                     elif out_format=='.nii':
                         mri_warped = nib.Nifti1Image(deepcopy(wdata), warped_mri_affine, warped_mri_header)
-                    # zooms = np.array(mri_warped.header.get_zooms())
-                    # zooms[[0, 2, 1]] *= np.array([1,1,1])
-                    # mri_warped.header.set_zooms(zooms)
-                    # mri_warped._affine = mri_warped.header.get_affine()  
                     nib.save(mri_warped, warped_mri_fname.replace('.mgz', out_format))
                     del mri_warped
                 plt.close()
     return print('\nCheck results in -> %s/%s'%(pseudo_subjects_dir, pseudo_subject), '\ne=%s'%e)
+#%%
