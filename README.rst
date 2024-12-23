@@ -26,30 +26,25 @@ Quick Start
 Installation
 ------------
 
-• Download the software: 
+Download the software
+.. code-block:: bash
 git clone https://github.com/neurosignal/pseudo-MRI-engine.git
-• Change the current direct to pseudo-MRI-engine
+
+Change the directory
+.. code-block:: bash
 cd pseudo-MRI-engine
-• Set up a Python environment, for example as:
+
+Set up a Python environment, for example as:
+.. code-block:: bash
 conda activate < your environment>
-• Run to check and install all dependencies for the pseudo-MRI engine:
+
+Run to check and install all dependencies for the pseudo-MRI engine:
+.. code-block:: bash
 pip install -r requirements.txt
-• Check the installation: 
+
+Check the installation: 
+.. code-block:: bash
 python pseudoMRI_engine.py –help
-
-Install the package using pip:
-
-.. code-block:: bash
-
-   pip install pseudo-MRI-engine
-
-Or clone the repository and install manually:
-
-.. code-block:: bash
-
-   git clone https://github.com/neurosignal/pseudo-MRI-engine
-   cd pseudo-MRI-engine
-   pip install .
 
 
 
