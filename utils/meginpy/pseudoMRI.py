@@ -15,7 +15,7 @@ from os.path import join, exists, dirname, relpath
 from os import makedirs,  walk      
 from mne.io.constants import FIFF
 from scipy.spatial import distance
-from mayavi.mlab import figure, points3d, orientation_axes, text3d, gcf, close, view
+from mayavi.mlab import figure, points3d, orientation_axes, text3d, gcf, close
 from scipy import linalg, stats
 from copy import deepcopy
 from IsoScore import IsoScore
@@ -570,7 +570,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
                     dense_hsp=False, mirror_hsps=True, template_headsurf='auto', dense_surf=True, z_thres=0.02, 
                     destHSPsShiftInwrd=0.0025, Wreg_est=0.000005, Wreg_apply= 0.00005, wtol=1e-06,
                     warp_anatomy=True, which_mri='all', blocksize=500000, write2format=['.mgz'], n_jobs=1, 
-                    toplot=True, toooplot=True, pyplot_fsize=12, save_pmri_plot=True,
+                    toplot=True, toooplot=True, pyplot_fsize=12,
                     plot_zoom_in='12%', plot_nslice=16, plot_tol=3, plot_side_leave='25%', plot_lw=1.5,  
                     plot_titlecolor=(.8,.9,.2), plot_titlefsize=18, dig_reject_min_max=[2, 10], 
                     use_hpi=True, show_good_hsps_idx=True, rem_good_pts_idx=[],  nmax_Ctrl= 150,

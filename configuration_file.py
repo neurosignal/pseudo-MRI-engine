@@ -66,7 +66,6 @@ def check_set_input_config(args):
     args.toplot            = True           if not hasattr(args, 'toplot')             else args.toplot
     args.toooplot          = True           if not hasattr(args, 'toooplot')           else args.toooplot
     args.pyplot_fsize      = 12             if not hasattr(args, 'pyplot_fsize')       else args.pyplot_fsize
-    args.save_pmri_plot    = True           if not hasattr(args, 'save_pmri_plot')     else args.save_pmri_plot
     args.plot_zoom_in      = '12%'          if not hasattr(args, 'plot_zoom_in')       else args.plot_zoom_in
     args.plot_nslice       = 16             if not hasattr(args, 'plot_nslice')        else int(args.plot_nslice)
     args.plot_tol          = 3              if not hasattr(args, 'plot_tol')           else int(args.plot_tol)

@@ -32,18 +32,6 @@ parser.add_argument('-v',       '--verbose',            action='store_true',    
 parser.add_argument('-o',       '--open_report',        action='store_true',      help='open report or not when completed?')
 args = parser.parse_args()
 
-#%% for test
-args.pseudo_MRI_name    = 'ICBM2009c_asym_nlin_Amit_test1'
-args.pseudo_MRI_dir     = None
-args.template_MRI_name  = 'ICBM2009c_asym_nlin'
-args.template_MRI_dir   = '/net/qnap/data/rd/ChildBrain/FS_SUBS_DIR/sub_fs732/subjects/'
-args.headshape          = '/net/qnap/data/rd/ChildBrain/DATA/Biomag_Amit/jaiswal_amit/181211/aj_vis_01_raw_tsss.fif'
-args.preauri_loc        ='CrusHelix'
-args.dense_hsp          = False
-args.show_good_hsps_idx = False
-args.verbose            = True
-args.nmax_Ctrl          = 200
-
 #%% Check and set default parameters
 from configuration_file import check_set_input_config
 args  = check_set_input_config(args)
@@ -68,18 +56,18 @@ args.report.save(fname=args.report_file,
                  open_browser=True if args.open_browser else False, 
                  overwrite=True, sort_content=False, verbose=args.verbose)
 
-#%% Run pseudomriengine
+#%% Run pseudo-MRI engine
 tic()
 pseudomriengine(args.pseudo_MRI_name, args.pseudo_MRI_dir, args.headshape, 
-                args.template_MRI_name, args.template_MRI_dir, args.def_fiducial_file, 
-                dense_hsp=args.dense_hsp, mirror_hsps=args.mirror_hsps, 
-                template_headsurf=args.template_headsurf, 
+                args.template_MRI_name, args.template_MRI_dir, 
+                args.def_fiducial_file, dense_hsp=args.dense_hsp, 
+                mirror_hsps=args.mirror_hsps, template_headsurf=args.template_headsurf, 
                 dense_surf=args.dense_surf,   z_thres=args.z_thres, n_jobs=args.n_jobs, 
                 destHSPsShiftInwrd=args.destHSPsShiftInwrd, Wreg_est=args.Wreg_est, 
                 Wreg_apply= args.Wreg_apply, wtol=args.wtol, warp_anatomy=args.warp_anatomy, 
-                which_mri=args.which_mri, blocksize=args.blocksize, write2format=args.write2format, 
-                toplot=args.toplot, toooplot=args.toooplot, pyplot_fsize=args.pyplot_fsize, 
-                save_pmri_plot=args.save_pmri_plot, plot_zoom_in=args.plot_zoom_in, 
+                which_mri=args.which_mri, blocksize=args.blocksize, 
+                write2format=args.write2format, toplot=args.toplot, toooplot=args.toooplot, 
+                pyplot_fsize=args.pyplot_fsize, plot_zoom_in=args.plot_zoom_in, 
                 plot_nslice=args.plot_nslice, plot_tol=args.plot_tol, 
                 plot_side_leave=args.plot_side_leave, plot_lw=args.plot_lw,  
                 plot_titlecolor=args.plot_titlecolor, plot_titlefsize=args.plot_titlefsize, 
