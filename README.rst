@@ -1,4 +1,5 @@
 # pseudo-MRI-engine
+
 Pseudo-MRI engine for MRI-free electromagnetic source imaging.
 It utilizes the head shape digitization points, generally acquired during MEG/EEG acquisition, for warping a given MRI template to the best fit to the subject's head. It yields a set of robustly warped MRI and its derivative surfaces, referred to as pseudo-MRI. Although the dense and evenly sampled scalp digitization points are recommended, the software can efficiently generate pseudo-MRI even with as few as 25 points (nearly 1 point per 25 cm2).
 pseudo-MRI-engine is a pure Python package, and depends on several other Python packages. pseudo-MRI-engine requires Python version 3.7 or higher.
@@ -7,16 +8,16 @@ pseudo-MRI-engine is a pure Python package, and depends on several other Python 
 **Installation**
 
 
-    • Download the software:
-git clone https://github.com/neurosignal/pseudo-MRI-engine.git
+    • Download the software: 
+    git clone https://github.com/neurosignal/pseudo-MRI-engine.git
     • Change the current direct to pseudo-MRI-engine
-cd pseudo-MRI-engine
+    cd pseudo-MRI-engine
     • Set up a Python environment, for example as:
-conda activate < your environment>
+    conda activate < your environment>
     • Run to check and install all dependencies for the pseudo-MRI engine:
-pip install -r requirements.txt
+    pip install -r requirements.txt
     • Check the installation: 
-python pseudoMRI_engine.py –help
+    python pseudoMRI_engine.py –help
 
 
 **Preparation of a template MRI:**
