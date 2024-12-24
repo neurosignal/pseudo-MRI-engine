@@ -935,21 +935,22 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
             warped_mri_fname = src_mri_fname.replace( templates_dir, pseudo_subjects_dir ).replace( template, pseudo_subject )
             wdata, miscs = apply_warp_to_anatomy(deepcopy(srcCtrl), deepcopy(destCtrl), mridata=None, t1_fname=src_mri_fname, 
                                                            Torig=None, block_size=blocksize, reg=Wreg_apply, reg_mode=2, 
-                                                           toplot_final=False, warped_surf=None, n_jobs=args.n_jobs, 
-                                                           resample=False, rs_voxel_sizes=[.5,.5,.5])
+                                                           toplot_final=False, warped_surf=None, n_jobs=1, 
+                                                           resample=False, rs_voxel_sizes=[.5,.5,.5])            
             add_line_to_file(config_fname, "***%s***\n"%warped_mri_fname.replace(pseudo_subjects_dir, ''))
-            add_line_to_file(config_fname, "Reguln applied to estimate Wtrans for vox \t= %s\n"%miscs['regWtransVox'])
+            add_line_to_file(config_fname, "Reguln. applied to estimate Wtrans for vox \t= %s\n"%miscs['regWtransVox'])
             add_line_to_file(config_fname, "Bending energy in estimating Wtrans for vox \t= %s\n"%miscs['e_vox'])
             add_line_to_file(config_fname, "Reguln applied to estimate inv Wtrans for vox \t= %s\n"%miscs['reginvWtransVox'])
             add_line_to_file(config_fname, "Bending energy in estimating inv Wtrans for vox = %s\n"%miscs['e_vox_inv'])
             if wdata is not None:
-                fig = viz.plot_surf_anat_alignment_v2(wdata, miscs['Torig'], destCtrl, warpedSurf, zoom_in=plot_zoom_in,
+                fig = viz.plot_surf_anat_alignment_v4(wdata, miscs['Torig'], destCtrl, warpedSurf, zoom_in=plot_zoom_in,
                                                 title= warped_mri_fname.replace( pseudo_subjects_dir, '' ), 
                                                 nslice=plot_nslice, tol=plot_tol, side_leave=plot_side_leave, lw=plot_lw,  
                                                 titlecolor=plot_titlecolor, titlefsize=plot_titlefsize)
                 plt.show();     plt.pause(.5);     plt.get_current_fig_manager().full_screen_toggle(); plt.pause(.5)
                 plt.subplots_adjust(top=0.999,bottom=0.025,left=0.1,right=0.9,hspace=0.0,wspace=-0.0); plt.pause(.5)
                 if report!=None and report_file!=None:
+                    plt.suptitle('')
                     report.add_figure(fig, title=f"pseudo-MRI's {src_mri_fname.split('/')[-1]}",
                           caption=join(f"../{pseudo_subject}/mri/{src_mri_fname.split('/')[-1]}"),
                           image_format=None, tags=('pseudoMRI',), replace=True, section='Warped anatomy')

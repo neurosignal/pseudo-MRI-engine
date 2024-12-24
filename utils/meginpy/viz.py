@@ -7,8 +7,8 @@ Created on Sun Mar 10 22:27:11 2019
 USAGE: meginpy.viz: This is part of MEGINPY platform employing tools for visualization.
 
 """
-import mne
 from mne.surface import read_surface
+from mne.io.constants import FIFF
 from mne import read_bem_surfaces, write_bem_surfaces, transform_surface_to
 from mne.transforms import read_trans, invert_transform, apply_trans
 from mayavi.mlab import (figure, points3d, triangular_mesh, 
@@ -22,6 +22,7 @@ import matplotlib.pyplot as plt
 from time import sleep
 from matplotlib.pyplot import close
 import numpy as np
+from itertools import product
 
 @verbose
 def read_plot_surface(surface_file, transfile=None, toplot=False, newfig=True, figname=None, 
@@ -32,7 +33,7 @@ def read_plot_surface(surface_file, transfile=None, toplot=False, newfig=True, f
     try:
         surface_mesh = read_surface(surface_file, read_metadata=False, return_dict=True, 
                                                 file_format='auto', verbose=None)[2]
-        surface_mesh.update(coord_frame=mne.io.constants.FIFF.FIFFV_COORD_MRI)
+        surface_mesh.update(coord_frame=FIFF.FIFFV_COORD_MRI)
         surface_mesh['rr'] /= 1000. # convert to m
     except ValueError as valuerr: # this is reading dense and meadium skin surface
         print(valuerr)
@@ -40,7 +41,7 @@ def read_plot_surface(surface_file, transfile=None, toplot=False, newfig=True, f
   
     if not transfile is None:
         surface_mesh = transform_surface_to(surface_mesh, 'head', 
-                                                mne.transforms.read_trans(transfile), copy=True) 
+                                                read_trans(transfile), copy=True) 
     if transfile is None and not transtoapply is None:
         surface_mesh['rr'] = apply_trans(transtoapply, deepcopy(surface_mesh['rr']))
     if not fname2writeAsBEMsurface is None:
@@ -176,64 +177,58 @@ def get_put_snaps(repMNE, f_RepMNE, title, section, tags, caption, add2report=Tr
                         overwrite=True, sort_content=False, verbose=verb)
             print(f'Snaps added to report: {f_RepMNE}')
             
-def plot_surf_anat_alignment_v2(wdata, Torig, destCtrl, warpedSurf, title=None, nslice=8, tol=2, 
-                                side_leave='25%', lw=1.5, titlecolor=(.8,.9,.2), titlefsize=18, 
-                                cmap='gist_gray_r', zoom_in='10%', viewmodes = ['yz', 'xy', 'xz']):
-    zoom_in = -int(zoom_in[:-1])/100
-    side_leave = int(side_leave.replace('%', ''))/100
+def plot_surf_anat_alignment_v4(wdata, Torig, destCtrl, warpedSurf, title=None, nslice=8, tol=2, 
+                                side_leave='25%', lw=0.7, titlecolor=(.8,.9,.2), titlefsize=10, 
+                                cmap='gist_gray_r', zoom_in='5%', viewmodes = ['yz', 'xy', 'xz']):
+    zoom_in     = -int(zoom_in[:-1])/100
+    side_leave  = int(side_leave.replace('%', ''))/100
     surf_rr_vox = apply_trans(np.linalg.inv(Torig), deepcopy(warpedSurf['rr'])*1000)
-    destCtrl_vox  = apply_trans(np.linalg.inv(Torig), deepcopy(destCtrl)*1000)
-    slice_idx =   np.linspace(int(wdata.shape[0]*side_leave), wdata.shape[0] - \
+    destCtrl_vox= apply_trans(np.linalg.inv(Torig), deepcopy(destCtrl)*1000)
+    slice_idx   = np.linspace(int(wdata.shape[0]*side_leave), wdata.shape[0] - \
                               int(wdata.shape[0]*side_leave), nslice, dtype=int)
-    fig = plt.figure(num=title)
-    plt.suptitle(str(title))
-    nrow, ncol, nplot = len(viewmodes)*2, nslice//2, 0
-    for iview in range(len(viewmodes)):
-        viewmode = viewmodes[iview]
-        for jj in range(nslice):
-            nplot += 1
-            fig.add_subplot(nrow, ncol, nplot)
-            if viewmode=='yz':
-                plt.imshow(wdata[slice_idx[jj],:,:], cmap=cmap)
-                plt.tricontour(surf_rr_vox[:, 2], surf_rr_vox[:, 1], warpedSurf['tris'], surf_rr_vox[:, 0], 
-                                       levels=[slice_idx[jj]],  colors='r', linewidths=lw,   zorder=1)
-                destCtrl_vox2 = np.empty((0,2))
-                for ii in range(destCtrl_vox.shape[0]):
-                    tol = tol # slice
-                    if destCtrl_vox[ii,0] < slice_idx[jj]+tol and destCtrl_vox[ii,0] > slice_idx[jj]-tol:
-                        destCtrl_vox2 = np.vstack((destCtrl_vox2, destCtrl_vox[ii,1:]))
-                plt.scatter(destCtrl_vox2[:, 1], destCtrl_vox2[:, 0], color=(1,.5,0), marker='o', edgecolors='k')
-                plt.text(wdata[slice_idx[jj],:,:].shape[0]/2, wdata[slice_idx[jj],:,:].shape[1]/2, str(slice_idx[jj]), 
-                         **dict(ha='center', va='center', color=titlecolor, fontsize=titlefsize))
-                plt.margins(zoom_in)
-                plt.box(on=False);   plt.xticks([]);    plt.yticks([])
-            elif viewmode=='xy':
-                plt.imshow(wdata[:,slice_idx[jj],:], cmap=cmap)
-                plt.tricontour(surf_rr_vox[:, 2], surf_rr_vox[:, 0], warpedSurf['tris'], surf_rr_vox[:, 1], 
-                                       levels=[slice_idx[jj]],  colors='r', linewidths=lw,   zorder=1)
-                destCtrl_vox2 = np.empty((0,2))
-                for ii in range(destCtrl_vox.shape[0]):
-                    tol = tol # slice
-                    if destCtrl_vox[ii,1] < slice_idx[jj]+tol and destCtrl_vox[ii,1] > slice_idx[jj]-tol:
-                        destCtrl_vox2 = np.vstack((destCtrl_vox2, destCtrl_vox[ii,[0,2]]))
-                plt.scatter(destCtrl_vox2[:, 1], destCtrl_vox2[:, 0], color=(1,.5,0), marker='o', edgecolors='k')
-                plt.text(wdata[slice_idx[jj],:,:].shape[0]/2, wdata[slice_idx[jj],:,:].shape[1]/2, str(slice_idx[jj]), 
-                         **dict(ha='center', va='center', color=titlecolor, fontsize=titlefsize))
-                plt.margins(zoom_in) # 10% zoom in
-                plt.box(on=False);   plt.xticks([]);    plt.yticks([])
-            elif viewmode=='xz':
-                plt.imshow(wdata[:,:,slice_idx[jj]].T, cmap=cmap)
-                plt.tricontour(surf_rr_vox[:, 0], surf_rr_vox[:, 1], warpedSurf['tris'], surf_rr_vox[:, 2], 
-                                       levels=[slice_idx[jj]],  colors='r', linewidths=lw,   zorder=1)
-                destCtrl_vox2 = np.empty((0,2))
-                for ii in range(destCtrl_vox.shape[0]):
-                    tol = tol # slice
-                    if destCtrl_vox[ii,2] < slice_idx[jj]+tol and destCtrl_vox[ii,2] > slice_idx[jj]-tol:
-                        destCtrl_vox2 = np.vstack((destCtrl_vox2, destCtrl_vox[ii,[0,1]]))
-                plt.scatter(destCtrl_vox2[:, 0], destCtrl_vox2[:, 1], color=(1,.5,0), marker='o', edgecolors='k')
-                plt.text(wdata[slice_idx[jj],:,:].shape[0]/2, wdata[slice_idx[jj],:,:].shape[1]/2, str(slice_idx[jj]), 
-                         **dict(ha='center', va='center', color=titlecolor, fontsize=titlefsize))
-                plt.margins(zoom_in) # 10% zoom in
-                plt.box(on=False);   plt.xticks([]);    plt.yticks([])
+    cfg_txt     = dict(ha='center', va='center', color=titlecolor, fontsize=titlefsize)
+    cfg_cntr    = dict(colors='r', linewidths=lw,   zorder=1)
+    cfg_scat    = dict(s=5, color='g', marker='o', edgecolors='g')
+    nrow, ncol, iplot = len(viewmodes)*2, nslice//2, -1
+    fig, ax = plt.subplots(nrow, ncol, figsize=(15,12)); ax = ax.flatten()
+    # for ax_ in ax: ax_.set_frame_on(False)
+    for viewmode, jj in product(viewmodes, range(nslice)):
+        iplot += 1
+        if viewmode=='yz':
+            ax[iplot].imshow(wdata[slice_idx[jj],:,:], cmap=cmap)
+            ax[iplot].tricontour(surf_rr_vox[:, 2], surf_rr_vox[:, 1], warpedSurf['tris'], surf_rr_vox[:, 0], 
+                                   levels=[slice_idx[jj]],  **cfg_cntr)
+            destCtrl_vox2 = np.empty((0,2))
+            for ii in range(destCtrl_vox.shape[0]):
+                if destCtrl_vox[ii,0] < slice_idx[jj]+tol and destCtrl_vox[ii,0] > slice_idx[jj]-tol:
+                    destCtrl_vox2 = np.vstack((destCtrl_vox2, destCtrl_vox[ii,1:]))
+            ax[iplot].scatter(destCtrl_vox2[:, 1], destCtrl_vox2[:, 0], **cfg_scat)
+            ax[iplot].text(wdata[slice_idx[jj],:,:].shape[0]/2, 
+                           wdata[slice_idx[jj],:,:].shape[1]/2, str(slice_idx[jj]), **cfg_txt)
+            ax[iplot].margins(zoom_in);  ax[iplot].set_xticks([]);  ax[iplot].set_yticks([]);  
+        elif viewmode=='xy':
+            ax[iplot].imshow(wdata[:,slice_idx[jj],:], cmap=cmap)
+            ax[iplot].tricontour(surf_rr_vox[:, 2], surf_rr_vox[:, 0], warpedSurf['tris'], surf_rr_vox[:, 1], 
+                                   levels=[slice_idx[jj]], **cfg_cntr)
+            destCtrl_vox2 = np.empty((0,2))
+            for ii in range(destCtrl_vox.shape[0]):
+                if destCtrl_vox[ii,1] < slice_idx[jj]+tol and destCtrl_vox[ii,1] > slice_idx[jj]-tol:
+                    destCtrl_vox2 = np.vstack((destCtrl_vox2, destCtrl_vox[ii,[0,2]]))
+            ax[iplot].scatter(destCtrl_vox2[:, 1], destCtrl_vox2[:, 0], **cfg_scat)
+            ax[iplot].text(wdata[slice_idx[jj],:,:].shape[0]/2, 
+                           wdata[slice_idx[jj],:,:].shape[1]/2, str(slice_idx[jj]), **cfg_txt)
+            ax[iplot].margins(zoom_in);  ax[iplot].set_xticks([]);  ax[iplot].set_yticks([]); 
+        elif viewmode=='xz':
+            ax[iplot].imshow(wdata[:,:,slice_idx[jj]].T, cmap=cmap)
+            ax[iplot].tricontour(surf_rr_vox[:, 0], surf_rr_vox[:, 1], warpedSurf['tris'], surf_rr_vox[:, 2], 
+                                   levels=[slice_idx[jj]],  **cfg_cntr)
+            destCtrl_vox2 = np.empty((0,2))
+            for ii in range(destCtrl_vox.shape[0]):
+                if destCtrl_vox[ii,2] < slice_idx[jj]+tol and destCtrl_vox[ii,2] > slice_idx[jj]-tol:
+                    destCtrl_vox2 = np.vstack((destCtrl_vox2, destCtrl_vox[ii,[0,1]]))
+            ax[iplot].scatter(destCtrl_vox2[:, 0], destCtrl_vox2[:, 1], **cfg_scat)
+            ax[iplot].text(wdata[slice_idx[jj],:,:].shape[0]/2, 
+                           wdata[slice_idx[jj],:,:].shape[1]/2, str(slice_idx[jj]), **cfg_txt)
+            ax[iplot].margins(zoom_in);  ax[iplot].set_xticks([]);  ax[iplot].set_yticks([]);
     return fig
 

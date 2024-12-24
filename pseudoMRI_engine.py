@@ -53,7 +53,7 @@ args.report_file = join(report_dir, f"pseudoMRI_report{date_str}.html")
 args.report.add_sys_info(title='Analysis platform Info.')
 args.report.add_html(args, title='All parameters', tags=('parameters',))
 args.report.save(fname=args.report_file, 
-                 open_browser=True if args.open_browser else False, 
+                 open_browser=True if args.open_report else False, 
                  overwrite=True, sort_content=False, verbose=args.verbose)
 
 #%% Run pseudo-MRI engine
@@ -73,8 +73,7 @@ pseudomriengine(args.pseudo_MRI_name, args.pseudo_MRI_dir, args.headshape,
                 plot_titlecolor=args.plot_titlecolor, plot_titlefsize=args.plot_titlefsize, 
                 dig_reject_min_max=args.dig_reject_min_max, 
                 use_hpi=args.use_hpi, show_good_hsps_idx=args.show_good_hsps_idx, 
-                rem_good_pts_idx=args.rem_good_pts_idx,  
-                nmax_Ctrl=args.nmax_Ctrl,
+                rem_good_pts_idx=args.rem_good_pts_idx, nmax_Ctrl=args.nmax_Ctrl,
                 report=args.report, report_file=args.report_file, args=args)
 toc()
 

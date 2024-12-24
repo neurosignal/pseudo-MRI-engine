@@ -15,7 +15,6 @@ from glob2 import glob
 from mne.surface import read_surface
 
 def check_set_input_config(args):
-    
     # checks directories
     assert args.pseudo_MRI_name is not None
     assert exists(join(args.template_MRI_dir, args.template_MRI_name))
@@ -49,34 +48,31 @@ def check_set_input_config(args):
     args.Wreg_apply        = 1e-10          if not hasattr(args, 'Wreg_apply')         else args.Wreg_apply
     args.wtol              = 1e-06          if not hasattr(args, 'wtol')               else int(args.wtol)
     args.warp_anatomy      = True           if not hasattr(args, 'warp_anatomy')       else args.warp_anatomy
-    args.which_mri         = ['all', 
-                             ['T1.mgz']][1] if not hasattr(args, 'which_mri')          else args.which_mri
     args.blocksize         = 500000         if not hasattr(args, 'blocksize')          else int(args.blocksize)
     args.write2format      = ['.mgz']       if not hasattr(args, 'write2format')       else args.write2format
     args.use_hpi           = True           if not hasattr(args, 'use_hpi')            else args.use_hpi
     args.rem_good_pts_idx  = []             if not hasattr(args, 'rem_good_pts_idx')   else args.rem_good_pts_idx
     args.dig_reject_min_max= [2, 10]        if not hasattr(args, 'dig_reject_min_max') else args.dig_reject_min_max
-    args.nmax_Ctrl         =  200           if not hasattr(args, 'nmax_Ctrl')          else int(args.nmax_Ctrl)
+    args.nmax_Ctrl         = 200            if not hasattr(args, 'nmax_Ctrl')          else int(args.nmax_Ctrl)
+    args.which_mri         = ['T1.mgz']     if not hasattr(args, 'which_mri')          else args.which_mri
     
     for arg in list(args.__dict__.keys()):
         print('%s: %s'%(arg.ljust(18), vars(args)[arg])) if not 'Browse' in arg else None
         
     # plotting-related
-    args.show_good_hsps_idx= True           if not hasattr(args, 'show_good_hsps_idx') else args.show_good_hsps_idx
+    args.show_good_hsps_idx= False          if not hasattr(args, 'show_good_hsps_idx') else args.show_good_hsps_idx
     args.toplot            = True           if not hasattr(args, 'toplot')             else args.toplot
     args.toooplot          = True           if not hasattr(args, 'toooplot')           else args.toooplot
-    args.pyplot_fsize      = 12             if not hasattr(args, 'pyplot_fsize')       else args.pyplot_fsize
-    args.plot_zoom_in      = '12%'          if not hasattr(args, 'plot_zoom_in')       else args.plot_zoom_in
+    args.pyplot_fsize      = 12             if not hasattr(args, 'pyplot_fsize')       else int(args.pyplot_fsize)
+    args.plot_zoom_in      = '10%'          if not hasattr(args, 'plot_zoom_in')       else args.plot_zoom_in
     args.plot_nslice       = 16             if not hasattr(args, 'plot_nslice')        else int(args.plot_nslice)
     args.plot_tol          = 3              if not hasattr(args, 'plot_tol')           else int(args.plot_tol)
     args.plot_side_leave   = '25%'          if not hasattr(args, 'plot_side_leave')    else args.plot_side_leave
-    args.plot_lw           = 1.5            if not hasattr(args, 'plot_lw')            else args.plot_lw
+    args.plot_lw           = 0.5            if not hasattr(args, 'plot_lw')            else args.plot_lw
     args.plot_titlecolor   = (.8,.9,.2)     if not hasattr(args, 'plot_titlecolor')    else args.plot_titlecolor
-    args.plot_titlefsize   = 18             if not hasattr(args, 'plot_titlefsize')    else args.plot_titlefsize
+    args.plot_titlefsize   = 10             if not hasattr(args, 'plot_titlefsize')    else int(args.plot_titlefsize)
     args.figsize           = (15,4)         if not hasattr(args, 'figsize')            else args.figsize
-    
     if not hasattr(args, 'snap_config'):
         args.snap_config = dict(top=.999, bottom=0.0, left=-0.0, right=.999, wspace=-0.2, 
                                          titlepad=-5, tight=True, nsnap=3, figsize=args.figsize)
-
     return args
