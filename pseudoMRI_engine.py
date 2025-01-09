@@ -18,6 +18,10 @@ print(__doc__)
 
 #%% 1. Set subject and directories
 import argparse
+def parse_which_mris(value):
+    if value == 'all':  return 'all'
+    try:                return value.split(',')
+    except Exception:   raise argparse.ArgumentTypeError(f"Invalid format for --which_mris: {value}")
 parser = argparse.ArgumentParser(description='pseudo-MRI engine for MRI-free electromagnetic source imaging.')
 parser.add_argument('-p',       '--pseudo_MRI_name',    default=None,  type=str,  help='subject name')
 parser.add_argument('-pd',      '--pseudo_MRI_dir',     default=None,  type=str,  help='Parent directory for the pseudo-MRI folder (optional)')
@@ -27,9 +31,14 @@ parser.add_argument('-td',      '--template_MRI_dir',   default=None,  type=str,
 parser.add_argument('-fids',    '--fiducial_file',      default=None,  type=str,  help='Fiducial file of the template MRI')
 parser.add_argument('-paloc',   '--preauri_loc',        default=None,  type=str,  help='LPA/RPA location considered during the head digitization')
 parser.add_argument('-nctrl',   '--nmax_Ctrl',          default=300,   type=int,  help='Number of maximum control points.')
+parser.add_argument('-mris',    '--which_mris',         default='all', type=parse_which_mris, 
+                                                                                  help='List of files in /mri/ to warp. '
+                                                                                  'Use "all" or a comma-separated list like "T1.mgz,brain.mgz".')
 parser.add_argument('-densify', '--dense_hsp',          action='store_true',      help='densify HSP?')
 parser.add_argument('-v',       '--verbose',            action='store_true',      help='verbose mode or not?')
 parser.add_argument('-o',       '--open_report',        action='store_true',      help='open report or not when completed?')
+
+
 args = parser.parse_args()
 
 #%% Check and set default parameters
@@ -65,7 +74,7 @@ pseudomriengine(args.pseudo_MRI_name, args.pseudo_MRI_dir, args.headshape,
                 dense_surf=args.dense_surf,   z_thres=args.z_thres, n_jobs=args.n_jobs, 
                 destHSPsShiftInwrd=args.destHSPsShiftInwrd, Wreg_est=args.Wreg_est, 
                 Wreg_apply= args.Wreg_apply, wtol=args.wtol, warp_anatomy=args.warp_anatomy, 
-                which_mri=args.which_mri, blocksize=args.blocksize, 
+                which_mri=args.which_mris, blocksize=args.blocksize, 
                 write2format=args.write2format, toplot=args.toplot, toooplot=args.toooplot, 
                 pyplot_fsize=args.pyplot_fsize, plot_zoom_in=args.plot_zoom_in, 
                 plot_nslice=args.plot_nslice, plot_tol=args.plot_tol, 

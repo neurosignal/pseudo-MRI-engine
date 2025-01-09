@@ -54,7 +54,7 @@ def check_set_input_config(args):
     args.rem_good_pts_idx  = []             if not hasattr(args, 'rem_good_pts_idx')   else args.rem_good_pts_idx
     args.dig_reject_min_max= [2, 10]        if not hasattr(args, 'dig_reject_min_max') else args.dig_reject_min_max
     args.nmax_Ctrl         = 200            if not hasattr(args, 'nmax_Ctrl')          else int(args.nmax_Ctrl)
-    args.which_mri         = ['T1.mgz']     if not hasattr(args, 'which_mri')          else args.which_mri
+    args.which_mris        = 'all'          if not hasattr(args, 'which_mris')          else args.which_mris
     
     for arg in list(args.__dict__.keys()):
         print('%s: %s'%(arg.ljust(18), vars(args)[arg])) if not 'Browse' in arg else None

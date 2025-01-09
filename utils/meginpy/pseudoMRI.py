@@ -930,6 +930,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
             mris2warp = []
             for item, mrif in product(which_mri,src_paths['mri']):
                 mris2warp.append(mrif) if mrif.endswith(item) else None
+        mris2warp = [fname_ for  fname_ in mris2warp if not 'rawavg.mgz' in fname_] # discard rawavg.mgz bcoz it's in native coords 
         for src_mri_fname in mris2warp:  
             print('\nwarping... %s for %s'%(src_mri_fname, pseudo_subject))
             warped_mri_fname = src_mri_fname.replace( templates_dir, pseudo_subjects_dir ).replace( template, pseudo_subject )
