@@ -734,7 +734,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
         gcf().scene.light_manager.light_mode = "vtk"
         gcf().scene.light_manager.number_of_lights = 5
         if report!=None and report_file!=None:
-            viz.get_put_snaps(report, report_file, title='Warped scalp surface', section='Warped surfaces', tags=('warping',), 
+            viz.get_put_snaps(report, report_file, title='Warped scalp surface', section='Pseudo-MRI surfaces', tags=('warping',), 
                   caption="Warped scalp surface (green)", 
                   add2report=True, save=True, fig3d=gcf(),  image_format='png', replace=True, **args.snap_config)
             close(gcf())
@@ -839,8 +839,8 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
         SurfWarped[surf] = SurfNew
         del Surface, SurfNew
     if report!=None and report_file!=None:
-        viz.get_put_snaps(report, report_file, title='pseudo-MRI surfaces', section='Warped surfaces', tags=('pseudoMRI',), 
-              caption="Warped head and cortical surface", 
+        viz.get_put_snaps(report, report_file, title='pseudo-MRI surfaces', section='Pseudo-MRI surfaces', tags=('pseudoMRI',), 
+              caption="pseudo-MRI's head and cortical surface", 
               add2report=True, save=True, fig3d=gcf(),  image_format='png', replace=True, **args.snap_config)
         close(gcf())
     # Make bem surface soft links
@@ -954,7 +954,7 @@ def pseudomriengine(pseudo_subject, pseudo_subjects_dir, isotrak, template, temp
                     plt.suptitle('')
                     report.add_figure(fig, title=f"pseudo-MRI's {src_mri_fname.split('/')[-1]}",
                           caption=join(f"../{pseudo_subject}/mri/{src_mri_fname.split('/')[-1]}"),
-                          image_format=None, tags=('pseudoMRI',), replace=True, section='Warped anatomy')
+                          image_format=None, tags=('pseudoMRI',), replace=True, section='Pseudo-MRI anatomy')
                     report.save(fname=report_file, open_browser=False, overwrite=True, sort_content=False, verbose=args.verbose)
                 # Save the warped MRI file
                 makedirs(dirname(warped_mri_fname), exist_ok=True)
