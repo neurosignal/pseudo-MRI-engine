@@ -71,6 +71,42 @@ Check installation and input arguments:
 .. code-block:: bash
 
     python pseudo-MRI-engine.py --help
+    
+Output:
+
+.. code-block:: bash
+
+    usage: pseudoMRI_engine.py [-h] [-p PSEUDO_MRI_NAME] [-pd PSEUDO_MRI_DIR] [-dig HEADSHAPE] [-t TEMPLATE_MRI_NAME] [-td TEMPLATE_MRI_DIR] [-fids FIDUCIAL_FILE] [-paloc PREAURI_LOC] [-nctrl NMAX_CTRL] [-mris WHICH_MRIS]
+                           [-densify] [-v] [-o]
+
+    pseudo-MRI engine for MRI-free electromagnetic source imaging.
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -p PSEUDO_MRI_NAME, --pseudo_MRI_name PSEUDO_MRI_NAME
+                            subject name
+      -pd PSEUDO_MRI_DIR, --pseudo_MRI_dir PSEUDO_MRI_DIR
+                            Parent directory for the pseudo-MRI folder (optional)
+      -dig HEADSHAPE, --headshape HEADSHAPE
+                            File with headshape digitization information
+      -t TEMPLATE_MRI_NAME, --template_MRI_name TEMPLATE_MRI_NAME
+                            Template MRI name
+      -td TEMPLATE_MRI_DIR, --template_MRI_dir TEMPLATE_MRI_DIR
+                            Parent directory of the template MRI folder
+      -fids FIDUCIAL_FILE, --fiducial_file FIDUCIAL_FILE
+                            Fiducial file of the template MRI
+      -paloc PREAURI_LOC, --preauri_loc PREAURI_LOC
+                            LPA/RPA location considered during the head digitization
+      -nctrl NMAX_CTRL, --nmax_Ctrl NMAX_CTRL
+                            Number of maximum control points.
+      -mris WHICH_MRIS, --which_mris WHICH_MRIS
+                            List of files in /mri/ to warp. Use "all" or a comma-separated list like "T1.mgz,brain.mgz".
+      -densify, --dense_hsp
+                            densify HSP?
+      -v, --verbose         verbose mode or not?
+      -o, --open_report     open report or not when completed?
+
+
 
 Run as
 ------
