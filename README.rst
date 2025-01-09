@@ -81,7 +81,8 @@ Run as
 Example
 -------
 
-A sample data was added to the repository for an ice-breaking and test run. The subdirectories *templates* and *headshapes* under ***pseudo-MRI-engine/data*** hold a prepared template MRI (ICBM_2009) and an MEG *.fif* file consisting digitization data respectively.
+The subdirectory *data* includes sample data for ice-breaking and test run to start with *pseudo-MRI-engine*. 
+The *templates* under *data* includes a template MRI (ICBM_2009c; Fonov et al., 2011), prepared using FreeSurfer v7.4.1 (Fischl, 2012). The *headshapes* has a MEG file *test_case.fif* recorded from a 35-years-old healthy adult using MEGIN's MEG system. This file also holds the digitization data defining the subject's head shape.
 
 .. code-block:: bash
 
