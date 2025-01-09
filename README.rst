@@ -78,7 +78,8 @@ Run as:
 
     python pseudoMRI_engine.py --pseudo_MRI_name <subject ID> --pseudo_MRI_dir <pseudo-MRI folder> --headshape <headshape file> --template_MRI_name <name of template MRI folder> --template_MRI_dir <the parent directory of the template MRI folder> --fiducial_file <fiducial file of the template MRI> --preauri_loc <the position of the LPA/RPA considered during the head digitization> --nmax_Ctrl <maximum number of the control points to compute warping> --dense_hsp <set this flag to force densifying the digitization points if too sparse> --open_report <set this flag to open the HTML report file in the end>
 
-Example:
+Example
+=======
 
 .. code-block:: bash
 
