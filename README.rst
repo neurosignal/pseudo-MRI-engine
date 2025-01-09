@@ -82,6 +82,7 @@ Example
 -------
 
 A sample data was added to the repository for an ice-breaking and test run. The subdirectories *templates* and *headshapes* under ***pseudo-MRI-engine/data*** hold a prepared template MRI (ICBM_2009) and an MEG *.fif* file consisting digitization data respectively.
+
 .. code-block:: bash
 
     python pseudoMRI_engine.py --pseudo_MRI_name ICBM2009cNolinAsym_test_case \
