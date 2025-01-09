@@ -66,7 +66,7 @@ Segment a template MRI, for example MNE152, using recon-all routine of FreeSurfe
 Usage
 -----
 
-Check installation and input arguments by typing:   *python pseudo-MRI-engine.py --help*
+Check the installation and input arguments by typing:   *python pseudo-MRI-engine.py --help*
 
 .. code-block:: bash
 
@@ -111,7 +111,7 @@ Example
 The subdirectory *data* includes sample data for ice-breaking and test run to start with *pseudo-MRI-engine*. 
 The *templates* under *data* includes a template MRI (ICBM2009cNolinAsym; Fonov et al., 2011), prepared using FreeSurfer v7.4.1 (Fischl, 2012). The *headshapes* has a MEG file *test_case.fif* recorded from a 35-years-old healthy adult using MEGIN's MEG system. This file also holds the digitization data defining the subject's head shape.
 
-To start with the exmaple, run the following code (after completing the installation and its dependencies as explained above):
+To start with the example, run the following code (after completing the installation and its dependencies as explained above):
 
 .. code-block:: bash
     
@@ -122,7 +122,7 @@ To start with the exmaple, run the following code (after completing the installa
     --template_MRI_name ICBM2009cNolinAsym --template_MRI_dir data/templates/ \
     --preauri_loc CrusHelix --nmax_Ctrl 200 --which_mris T1.mgz,brain.mgz --open_report
     
-The *--pseudo_MRI_dir* can be set differently to write the output pseudo-MRI.
+The *--pseudo_MRI_dir* can be set differently to write the output pseudo-MRI elsewhere.
 
 Requirements
 ============
@@ -150,12 +150,12 @@ Requirements
 - Other dependencies (see `requirements.txt`)
 
 
-Contributing
+Contribution
 ============
 
 Contributions are welcome! If you have suggestions or find bugs, please open an issue or submit a pull request.
 
 
-
-
-
+Support
+========
+For further queries, write to the corresponding author to *amit.jaiswal@aalto.fi*
