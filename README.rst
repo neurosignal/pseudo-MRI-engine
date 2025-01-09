@@ -82,7 +82,7 @@ Example
 -------
 
 The subdirectory *data* includes sample data for ice-breaking and test run to start with *pseudo-MRI-engine*. 
-The *templates* under *data* includes a template MRI (ICBM_2009c; Fonov et al., 2011), prepared using FreeSurfer v7.4.1 (Fischl, 2012). The *headshapes* has a MEG file *test_case.fif* recorded from a 35-years-old healthy adult using MEGIN's MEG system. This file also holds the digitization data defining the subject's head shape.
+The *templates* under *data* includes a template MRI (ICBM2009cNolinAsym; Fonov et al., 2011), prepared using FreeSurfer v7.4.1 (Fischl, 2012). The *headshapes* has a MEG file *test_case.fif* recorded from a 35-years-old healthy adult using MEGIN's MEG system. This file also holds the digitization data defining the subject's head shape.
 
 .. code-block:: bash
 
