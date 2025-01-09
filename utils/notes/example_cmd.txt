@@ -1,0 +1,6 @@
+
+
+python pseudoMRI_engine.py --pseudo_MRI_name ICBM2009cNolinAsym_test_case \
+--pseudo_MRI_dir data/templates/ --headshape data/headshapes/test_case.fif \
+--template_MRI_name ICBM2009cNolinAsym --template_MRI_dir data/templates/ \
+--preauri_loc CrusHelix --nmax_Ctrl 200 --which_mris T1.mgz,brain.mgz --open_report
