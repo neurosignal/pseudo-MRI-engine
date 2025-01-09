@@ -66,7 +66,7 @@ Segment a template MRI, for example MNE152, using recon-all routine of FreeSurfe
 Usage
 -----
 
-Check installation and input arguments by typing *python pseudo-MRI-engine.py --help*
+Check installation and input arguments by typing:   *python pseudo-MRI-engine.py --help*
 
 .. code-block:: bash
 
@@ -111,12 +111,18 @@ Example
 The subdirectory *data* includes sample data for ice-breaking and test run to start with *pseudo-MRI-engine*. 
 The *templates* under *data* includes a template MRI (ICBM2009cNolinAsym; Fonov et al., 2011), prepared using FreeSurfer v7.4.1 (Fischl, 2012). The *headshapes* has a MEG file *test_case.fif* recorded from a 35-years-old healthy adult using MEGIN's MEG system. This file also holds the digitization data defining the subject's head shape.
 
+To start with the exmaple, run the following code (after completing the installation and its dependencies as explained above):
+
 .. code-block:: bash
+    
+    cd pseudo-MRI-engine
 
     python pseudoMRI_engine.py --pseudo_MRI_name ICBM2009cNolinAsym_test_case \
     --pseudo_MRI_dir data/templates/ --headshape data/headshapes/test_case.fif \
     --template_MRI_name ICBM2009cNolinAsym --template_MRI_dir data/templates/ \
     --preauri_loc CrusHelix --nmax_Ctrl 200 --which_mris T1.mgz,brain.mgz --open_report
+    
+The *--pseudo_MRI_dir* can be set differently to write the output pseudo-MRI.
 
 Requirements
 ============
