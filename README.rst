@@ -66,7 +66,7 @@ Segment a template MRI, for example MNE152, using recon-all routine of FreeSurfe
 Usage
 -----
 
-Check installation and input arguments by typing * python pseudo-MRI-engine.py --help *
+Check installation and input arguments by typing *python pseudo-MRI-engine.py --help*
 
 .. code-block:: bash
 
