@@ -31,7 +31,7 @@ parser.add_argument('-td',      '--template_MRI_dir',   default=None,  type=str,
 parser.add_argument('-fids',    '--fiducial_file',      default=None,  type=str,  help='Fiducial file of the template MRI')
 parser.add_argument('-paloc',   '--preauri_loc',        default=None,  type=str,  help='LPA/RPA location considered during the head digitization')
 parser.add_argument('-nctrl',   '--nmax_Ctrl',          default=300,   type=int,  help='Number of maximum control points.')
-parser.add_argument('-mris',    '--which_mris',         default='all', type=parse_which_mris, 
+parser.add_argument('-mris',    '--which_mris',         default='all', type=parse_which_mris,  
                                                                                   help='List of files in /mri/ to warp. '
                                                                                   'Use "all" or a comma-separated list like "T1.mgz,brain.mgz".')
 parser.add_argument('-densify', '--dense_hsp',          action='store_true',      help='densify HSP?')
