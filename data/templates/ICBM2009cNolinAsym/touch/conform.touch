@@ -1,0 +1,1 @@
+mri_convert /home/amit3/DATA/FS_DIR/subjects/0FS741/ICBM2009cNolinAsym/mri/rawavg.mgz /home/amit3/DATA/FS_DIR/subjects/0FS741/ICBM2009cNolinAsym/mri/orig.mgz --conform

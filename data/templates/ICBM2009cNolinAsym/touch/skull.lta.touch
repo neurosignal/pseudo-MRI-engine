@@ -1,0 +1,1 @@
+mri_em_register -skull nu.mgz /home/amit3/0Software/FreeSurf/FS741/usr/local/freesurfer/7.4.1/average/RB_all_withskull_2020_01_02.gca transforms/talairach_with_skull.lta

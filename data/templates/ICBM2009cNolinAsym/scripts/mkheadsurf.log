@@ -1,0 +1,103 @@
+Log file for mkheadsurf
+Wed Jan  8 22:37:36 EET 2025
+/home/amit3/pCloudDrive/Scripts
+/home/amit3/0Software/FreeSurf/FS732/freesurfer/bin/mkheadsurf
+-subjid ICBM2009cNolinAsym -srcvol T1.mgz -thresh1 20 -thresh2 20
+--------------------------------
+Wed Jan  8 22:37:36 EET 2025
+/home/amit3/pCloudDrive/Scripts
+mri_seghead --invol /home/amit3/DATA/FS_DIR/subjects/0FS741/ICBM2009cNolinAsym/mri/T1.mgz --outvol /home/amit3/DATA/FS_DIR/subjects/0FS741/ICBM2009cNolinAsym/mri/seghead.mgz --fill 1 --thresh1 20 --thresh2 20 --nhitsmin 2 --rescale --fill-holes-islands
+--------------------------------
+input volume:  /home/amit3/DATA/FS_DIR/subjects/0FS741/ICBM2009cNolinAsym/mri/T1.mgz
+output volume: /home/amit3/DATA/FS_DIR/subjects/0FS741/ICBM2009cNolinAsym/mri/seghead.mgz
+threshold1:    20
+threshold2:    20
+nhitsmin:      2
+fill value:    1
+Loading input volume
+Changing type, rescale = 1
+Filling Columns
+Filling Rows
+Filling Slices
+Merging
+nhits = 3885598
+Removing islands
+MRIremoveVolumeIslands() thresh=0.5, nKeep=1, nclusters = 1
+Removing Volume Holes
+MRIremoveVolumeHoles() thresh=0.5, nKeep=1
+MRIremoveVolumeIslands() thresh=0.5, nKeep=1, nclusters = 1
+Filling axial Slice Holes
+ostr LIA
+slicedir 6 slicediruse 2
+slicedim 256 1 256
+MRIremoveSliceHodes() removed 23994 voxels
+Filling sag Slice Holes
+ostr LIA
+slicedir 4 slicediruse 1
+slicedim 1 256 256
+MRIremoveSliceHodes() removed 2078 voxels
+Filling cor Slice Holes
+slicedir 2 slicediruse 2
+slicedim 256 1 256
+MRIremoveSliceHodes() removed 0 voxels
+Counting
+N Head Voxels = 3911670
+N Back Voxels = 12865546
+Avg. Back Intensity = 0.943006
+Max. Back Intensity = 129.000000
+Writing output
+Done
+--------------------------------
+Wed Jan  8 22:37:59 EET 2025
+/home/amit3/pCloudDrive/Scripts
+mri_mc /home/amit3/DATA/FS_DIR/subjects/0FS741/ICBM2009cNolinAsym/mri/seghead.mgz 1 /home/amit3/DATA/FS_DIR/subjects/0FS741/ICBM2009cNolinAsym/surf/lh.seghead
+--------------------------------
+
+preprocessing...done
+starting generation of surface...
+   slice nb 30...
+   slice nb 40...
+   slice nb 50...
+   slice nb 60...
+   slice nb 70...
+   slice nb 80...
+   slice nb 90...
+   slice nb 100...
+   slice nb 110...
+   slice nb 120...
+   slice nb 130...
+   slice nb 140...
+   slice nb 150...
+   slice nb 160...
+   slice nb 170...
+   slice nb 180...
+   slice nb 190...
+   slice nb 200...
+   slice nb 210...
+   slice nb 220...
+   slice nb 230...
+   slice nb 240...
+constructing final surface...
+(surface with 359940 faces and 179972 vertices)...done
+computing the maximum edge length...1.414214 mm
+reversing orientation of faces...
+checking orientation of surface...
+0.000 % of the vertices (0 vertices) exhibit an orientation change
+
+counting number of connected components...
+   179972 voxel in cpt #1: X=2 [v=179972,e=539910,f=359940] located at (-0.714417, 0.793235, -18.881187)
+For the whole surface: X=2 [v=179972,e=539910,f=359940]
+One single component has been found
+nothing to do
+writing out surface...done
+--------------------------------
+Wed Jan  8 22:38:00 EET 2025
+/home/amit3/pCloudDrive/Scripts
+mris_smooth -n 10 -nw /home/amit3/DATA/FS_DIR/subjects/0FS741/ICBM2009cNolinAsym/surf/lh.seghead /home/amit3/DATA/FS_DIR/subjects/0FS741/ICBM2009cNolinAsym/surf/lh.seghead
+--------------------------------
+smoothing for 10 iterations
+smoothing surface tessellation for 10 iterations...
+smoothing complete - recomputing first and second fundamental forms...
+Started at: Wed Jan 8 22:37:36 EET 2025
+Ended   at: Wed Jan  8 22:38:02 EET 2025
+mkheadsurf done

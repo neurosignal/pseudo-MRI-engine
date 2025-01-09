@@ -1,0 +1,1 @@
+mri_segstats --seed 1234 --seg mri/wmparc.mgz --sum stats/wmparc.stats --pv mri/norm.mgz --excludeid 0 --brainmask mri/brainmask.mgz --in mri/norm.mgz --in-intensity-name norm --in-intensity-units MR --subject ICBM2009cNolinAsym --surf-wm-vol --ctab /home/amit3/0Software/FreeSurf/FS741/usr/local/freesurfer/7.4.1/WMParcStatsLUT.txt --etiv

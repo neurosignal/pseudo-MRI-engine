@@ -1,0 +1,9 @@
+Logfile for pctsurfcon
+Wed Jan  8 21:19:45 EET 2025
+setenv SUBJECTS_DIR /home/amit3/DATA/FS_DIR/subjects/0FS741
+cd /home/amit3/DATA/FS_DIR/subjects/0FS741/ICBM2009cNolinAsym/scripts
+/home/amit3/0Software/FreeSurf/FS741/usr/local/freesurfer/7.4.1/bin/pctsurfcon
+pctsurfcon 7.4.1
+Linux dell7770 6.8.0-51-generic #52-Ubuntu SMP PREEMPT_DYNAMIC Thu Dec  5 13:09:44 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+FREESURFER_HOME /home/amit3/0Software/FreeSurf/FS741/usr/local/freesurfer/7.4.1
+Cleaning up

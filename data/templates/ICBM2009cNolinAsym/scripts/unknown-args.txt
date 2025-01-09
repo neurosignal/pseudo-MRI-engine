@@ -1,0 +1,5 @@
+-s
+ICBM2009cNolinAsym
+-i
+/net/qnap/data/rd/ChildBrain/DATA/mni_icbm152_t1_tal_nlin_asym_09c.nii.gz
+-autorecon-all

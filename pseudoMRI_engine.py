@@ -37,8 +37,6 @@ parser.add_argument('-mris',    '--which_mris',         default='all', type=pars
 parser.add_argument('-densify', '--dense_hsp',          action='store_true',      help='densify HSP?')
 parser.add_argument('-v',       '--verbose',            action='store_true',      help='verbose mode or not?')
 parser.add_argument('-o',       '--open_report',        action='store_true',      help='open report or not when completed?')
-
-
 args = parser.parse_args()
 
 #%% Check and set default parameters

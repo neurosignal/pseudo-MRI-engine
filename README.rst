@@ -78,6 +78,14 @@ Run as:
 
     python pseudoMRI_engine.py --pseudo_MRI_name <subject ID> --pseudo_MRI_dir <pseudo-MRI folder> --headshape <headshape file> --template_MRI_name <name of template MRI folder> --template_MRI_dir <the parent directory of the template MRI folder> --fiducial_file <fiducial file of the template MRI> --preauri_loc <the position of the LPA/RPA considered during the head digitization> --nmax_Ctrl <maximum number of the control points to compute warping> --dense_hsp <set this flag to force densifying the digitization points if too sparse> --open_report <set this flag to open the HTML report file in the end>
 
+Example:
+
+.. code-block:: bash
+
+    python pseudoMRI_engine.py --pseudo_MRI_name ICBM2009cNolinAsym_test_case \
+    --pseudo_MRI_dir data/templates/ --headshape data/headshapes/test_case.fif \
+    --template_MRI_name ICBM2009cNolinAsym --template_MRI_dir data/templates/ \
+    --preauri_loc CrusHelix --nmax_Ctrl 200 --which_mris T1.mgz,brain.mgz --open_report
 
 Requirements
 ============

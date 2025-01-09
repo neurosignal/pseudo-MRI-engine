@@ -1,0 +1,13 @@
+------------------------------
+SUBJECT ICBM2009cNolinAsym
+START_TIME Wed Jan 8 17:33:46 EET 2025
+END_TIME Wed Jan 8 21:45:31 EET 2025
+RUNTIME_HOURS 4.196
+USER amit3
+HOST dell7770
+PROCESSOR x86_64
+OS Linux
+UNAME Linux dell7770 6.8.0-51-generic #52-Ubuntu SMP PREEMPT_DYNAMIC Thu Dec  5 13:09:44 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+VERSION 7.4.1 (freesurfer-linux-ubuntu20_x86_64-7.4.1-20230614-7eb8460)
+CMDPATH /home/amit3/0Software/FreeSurf/FS741/usr/local/freesurfer/7.4.1/bin/recon-all
+CMDARGS -s ICBM2009cNolinAsym -i /net/qnap/data/rd/ChildBrain/DATA/mni_icbm152_t1_tal_nlin_asym_09c.nii.gz -autorecon-all

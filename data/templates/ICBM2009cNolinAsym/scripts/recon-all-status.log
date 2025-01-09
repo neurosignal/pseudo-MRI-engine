@@ -1,0 +1,81 @@
+status file for recon-all
+Wed Jan  8 17:33:47 EET 2025
+#@# MotionCor Wed Jan  8 17:33:54 EET 2025
+#@# Talairach Wed Jan  8 17:34:01 EET 2025
+#@# Talairach Failure Detection Wed Jan  8 17:36:51 EET 2025
+#@# Nu Intensity Correction Wed Jan  8 17:36:51 EET 2025
+#@# Intensity Normalization Wed Jan  8 17:39:26 EET 2025
+#@# Skull Stripping Wed Jan  8 17:40:48 EET 2025
+#@# EM Registration Wed Jan  8 17:48:53 EET 2025
+#@# CA Normalize Wed Jan  8 17:56:37 EET 2025
+#@# CA Reg Wed Jan  8 17:57:19 EET 2025
+#@# SubCort Seg Wed Jan  8 18:59:24 EET 2025
+#@# CC Seg Wed Jan  8 19:37:45 EET 2025
+#@# Merge ASeg Wed Jan  8 19:38:09 EET 2025
+#@# Intensity Normalization2 Wed Jan  8 19:38:09 EET 2025
+#@# Mask BFS Wed Jan  8 19:40:35 EET 2025
+#@# WM Segmentation Wed Jan  8 19:40:37 EET 2025
+#@# Fill Wed Jan  8 19:42:49 EET 2025
+#@# Tessellate lh Wed Jan  8 19:43:47 EET 2025
+#@# Tessellate rh Wed Jan  8 19:43:51 EET 2025
+#@# Smooth1 lh Wed Jan  8 19:43:55 EET 2025
+#@# Smooth1 rh Wed Jan  8 19:43:57 EET 2025
+#@# Inflation1 lh Wed Jan  8 19:43:59 EET 2025
+#@# Inflation1 rh Wed Jan  8 19:44:16 EET 2025
+#@# QSphere lh Wed Jan  8 19:44:33 EET 2025
+#@# QSphere rh Wed Jan  8 19:46:32 EET 2025
+#@# Fix Topology lh Wed Jan  8 19:48:30 EET 2025
+#@# Fix Topology rh Wed Jan  8 19:50:53 EET 2025
+#@# Smooth2 lh Wed Jan  8 20:06:38 EET 2025
+#@# Smooth2 rh Wed Jan  8 20:06:41 EET 2025
+#@# Inflation2 lh Wed Jan  8 20:06:43 EET 2025
+#@# Inflation2 rh Wed Jan  8 20:07:05 EET 2025
+#@# Curv .H and .K lh Wed Jan  8 20:07:26 EET 2025
+#@# Curv .H and .K rh Wed Jan  8 20:08:23 EET 2025
+#@# Sphere lh Wed Jan  8 20:09:17 EET 2025
+#@# Sphere rh Wed Jan  8 20:20:20 EET 2025
+#@# Surf Reg lh Wed Jan  8 20:38:24 EET 2025
+#@# Surf Reg rh Wed Jan  8 20:45:19 EET 2025
+#@# Jacobian white lh Wed Jan  8 20:57:06 EET 2025
+#@# Jacobian white rh Wed Jan  8 20:57:08 EET 2025
+#@# AvgCurv lh Wed Jan  8 20:57:09 EET 2025
+#@# AvgCurv rh Wed Jan  8 20:57:10 EET 2025
+#@# Cortical Parc lh Wed Jan  8 20:57:10 EET 2025
+#@# Cortical Parc rh Wed Jan  8 20:57:18 EET 2025
+#@# white curv lh Wed Jan  8 21:12:47 EET 2025
+#@# white area lh Wed Jan  8 21:12:49 EET 2025
+#@# pial curv lh Wed Jan  8 21:12:50 EET 2025
+#@# pial area lh Wed Jan  8 21:12:52 EET 2025
+#@# thickness lh Wed Jan  8 21:12:53 EET 2025
+#@# area and vertex vol lh Wed Jan  8 21:13:32 EET 2025
+#@# white curv rh Wed Jan  8 21:13:33 EET 2025
+#@# white area rh Wed Jan  8 21:13:35 EET 2025
+#@# pial curv rh Wed Jan  8 21:13:36 EET 2025
+#@# pial area rh Wed Jan  8 21:13:37 EET 2025
+#@# thickness rh Wed Jan  8 21:13:38 EET 2025
+#@# area and vertex vol rh Wed Jan  8 21:14:07 EET 2025
+#@# Curvature Stats lh Wed Jan  8 21:14:09 EET 2025
+#@# Curvature Stats rh Wed Jan  8 21:14:11 EET 2025
+#@# Cortical ribbon mask Wed Jan  8 21:14:14 EET 2025
+#@# Cortical Parc 2 lh Wed Jan  8 21:19:07 EET 2025
+#@# Cortical Parc 2 rh Wed Jan  8 21:19:18 EET 2025
+#@# Cortical Parc 3 lh Wed Jan  8 21:19:29 EET 2025
+#@# Cortical Parc 3 rh Wed Jan  8 21:19:38 EET 2025
+#@# WM/GM Contrast lh Wed Jan  8 21:19:45 EET 2025
+#@# WM/GM Contrast rh Wed Jan  8 21:19:48 EET 2025
+#@# Relabel Hypointensities Wed Jan  8 21:19:51 EET 2025
+#@# APas-to-ASeg Wed Jan  8 21:20:06 EET 2025
+#@# AParc-to-ASeg aparc Wed Jan  8 21:20:15 EET 2025
+#@# AParc-to-ASeg aparc.a2009s Wed Jan  8 21:22:37 EET 2025
+#@# AParc-to-ASeg aparc.DKTatlas Wed Jan  8 21:25:08 EET 2025
+#@# WMParc Wed Jan  8 21:27:37 EET 2025
+#@# Parcellation Stats lh Wed Jan  8 21:34:30 EET 2025
+#@# Parcellation Stats rh Wed Jan  8 21:34:58 EET 2025
+#@# Parcellation Stats 2 lh Wed Jan  8 21:35:26 EET 2025
+#@# Parcellation Stats 2 rh Wed Jan  8 21:35:41 EET 2025
+#@# Parcellation Stats 3 lh Wed Jan  8 21:35:55 EET 2025
+#@# Parcellation Stats 3 rh Wed Jan  8 21:36:08 EET 2025
+#@# ASeg Stats Wed Jan  8 21:36:21 EET 2025
+#@# BA_exvivo Labels lh Wed Jan  8 21:39:35 EET 2025
+#@# BA_exvivo Labels rh Wed Jan  8 21:42:38 EET 2025
+recon-all -s ICBM2009cNolinAsym finished without error at Wed Jan  8 21:45:31 EET 2025

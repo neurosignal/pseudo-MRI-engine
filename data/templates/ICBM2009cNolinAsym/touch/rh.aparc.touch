@@ -1,0 +1,1 @@
+mris_ca_label -l ../label/rh.cortex.label -aseg ../mri/aseg.presurf.mgz -seed 1234 ICBM2009cNolinAsym rh ../surf/rh.sphere.reg /home/amit3/0Software/FreeSurf/FS741/usr/local/freesurfer/7.4.1/average/rh.DKaparc.atlas.acfb40.noaparc.i12.2016-08-02.gcs ../label/rh.aparc.annot
