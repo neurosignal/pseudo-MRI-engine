@@ -131,30 +131,13 @@ Requirements
  - `Numpy <https://www.numpy.org/>`_
  - `Scipy <https://www.scipy.org/>`_
  - `Trimesh <https://github.com/mikedh/trimesh>`_
- - `CVXPY <https://cvxpy.org/>`_
  - `Matplotlib <https://matplotlib.org/>`_
- - `Pyvista <https://docs.pyvista.org/>`_
  - `glob2 <https://pypi.org/project/glob2/>`_
-
-- ipython==8.12.3
-
-- IsoScore==2.0.1
-
-- matplotlib==3.7.2
-
-- mayavi==4.8.1
-
-- mne==1.9.0
-
-- nibabel==4.0.2
-
-- nilearn==0.9.2
-
-- numpy==1.24.4
-
-- scipy==1.10.1
-
-- Other dependencies (see `requirements.txt`)
+ - `IsoScore <https://github.com/bcbi-edu/p_eickhoff_isoscore/tree/main/IsoScore>`_
+ - `Mayavi <https://docs.enthought.com/mayavi/mayavi/>`_
+ - `MNE-Python <https://mne.tools/stable/index.html>`_
+ - `Nibabel <https://github.com/nipy/nibabel>`_
+ - Other dependencies (see `requirements.txt`)
 
 
 Contribution
