@@ -137,7 +137,7 @@ Requirements
  - `Mayavi <https://docs.enthought.com/mayavi/mayavi/>`_
  - `MNE-Python <https://mne.tools/stable/index.html>`_
  - `Nibabel <https://github.com/nipy/nibabel>`_
- - Other dependencies (see `requirements.txt`)
+ - Other dependencies (see `requirements.txt <https://github.com/neurosignal/pseudo-MRI-engine/blob/main/requirements.txt>`_)
 
 
 Contribution
