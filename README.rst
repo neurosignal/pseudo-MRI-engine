@@ -1,11 +1,17 @@
 .. -* mode: rst -*-
 
+|
+
+|pseudoMRIengine|_
+
+|
+
+.. |pseudo-MRI-engine| image:: https://github.com/neurosignal/pseudo-MRI-engine/blob/main/utils/notes/img01.png
+.. _pseudoMRIengine: https://github.com/neurosignal/pseudo-MRI-engine
+
 ==========================
 Pseudo-MRI engine
 ==========================
-
-.. |pseudo-MRI-engine| image:: https://github.com/neurosignal/pseudo-MRI-engine/blob/main/utils/notes/img01.png
-.. _pseudo-MRI-engine: https://github.com/neurosignal/pseudo-MRI-engine
 
 Overview
 ========
