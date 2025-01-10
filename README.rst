@@ -148,4 +148,4 @@ Contributions are welcome! If you have suggestions or find bugs, please open an 
 
 Support
 ========
-For further queries, write to the corresponding author at `amit.jaiswal@aalto.fi <amit.jaiswal@megin.fi>_`
+For further queries, write at amit.jaiswal@aalto.fi or amit.jaiswal@megin.fi
