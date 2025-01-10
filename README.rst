@@ -6,7 +6,6 @@ Pseudo-MRI engine
 
 .. image:: https://github.com/neurosignal/pseudo-MRI-engine/blob/main/utils/notes/img01.png
 
-
 Overview
 ========
 
@@ -15,7 +14,6 @@ It yields a set of robustly warped MRI and its derivative surfaces, referred to 
 Pseudo-MRI-engine is a pure Python package, and depends on several other Python packages; it requires Python version 3.7 or higher.
 
 | **GitHub Repository**: https://github.com/neurosignal/pseudo-MRI-engine
-
 
 Features
 --------
@@ -66,7 +64,6 @@ Preparation of a template MRI
 -----------------------------
 
 Segment a template MRI, for example MNE152, using recon-all routine of FreeSurfer (or FastSurfer). Also compute head model and scalp surfaces using MNE-Python routines. Furthermore, the fiducial points for the template MRI can be identified using MNE-Python coregistration module and saved as FIFF file with an appropriate pattern from CrusHelix, Targus, and ITnotch.
-
 
 Usage
 -----
@@ -131,6 +128,12 @@ The *--pseudo_MRI_dir* can be set differently to write the output pseudo-MRI els
 
 Requirements
 ============
+ - `Numpy <https://www.numpy.org/>`_
+ - `Scipy <https://www.scipy.org/>`_
+ - `Trimesh <https://github.com/mikedh/trimesh>`_
+ - `CVXPY <https://cvxpy.org/>`_
+ - `Matplotlib <https://matplotlib.org/>`_
+ - `Pyvista <https://docs.pyvista.org/>`_
 
 - glob2==0.7
 
