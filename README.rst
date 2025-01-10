@@ -134,8 +134,7 @@ Requirements
  - `CVXPY <https://cvxpy.org/>`_
  - `Matplotlib <https://matplotlib.org/>`_
  - `Pyvista <https://docs.pyvista.org/>`_
-
-- glob2==0.7
+ - `glob2 <https://pypi.org/project/glob2/>`_(0.7)
 
 - ipython==8.12.3
 
