@@ -17,7 +17,7 @@ Pseudo-MRI-engine is a pure Python package, and depends on several other Python 
 
 Features
 --------
-• It can generate a subject-specific template MRI, i.e., pseudo-MRI, based on the head shape. 
+• It can generate a subject-specific template MRI, i.e., pseudo-MRI, based on the subject's head shape. 
 • Such a pseudo-MRI can readily be used with severals oftware packages for MEG/EEG source imaging.
 • Easy-to-use interface for quick integration into workflows.
 • Open-source and extendable.
