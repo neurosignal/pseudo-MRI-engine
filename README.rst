@@ -143,7 +143,7 @@ Requirements
 Citing pseudo-MRI engine
 ========================
 
-When using the pseudo-MRI engine, please cite the following articles:
+When using the pseudo-MRI engine, please cite the following article:
 
 .. code-block:: BiBTeX
 
