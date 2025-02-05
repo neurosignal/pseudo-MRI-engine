@@ -140,10 +140,8 @@ Requirements
  - Other dependencies (see `requirements.txt <https://github.com/neurosignal/pseudo-MRI-engine/blob/main/requirements.txt>`_)
 
 
-
-
 Citing pseudo-MRI engine
-^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 When using the pseudo-MRI engine, please cite the following articles:
 
@@ -162,7 +160,6 @@ When using the pseudo-MRI engine, please cite the following articles:
 		URL = {https://doi.org/10.1002/hbm.70148},
 		eprint = {https://doi.org/10.1002/hbm.70148}
 	}  
-    
     
 Contribution
 ============
