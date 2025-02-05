@@ -140,6 +140,30 @@ Requirements
  - Other dependencies (see `requirements.txt <https://github.com/neurosignal/pseudo-MRI-engine/blob/main/requirements.txt>`_)
 
 
+
+
+Citing pseudo-MRI engine
+^^^^^^^^^^^^^^^^^^
+
+When using the pseudo-MRI engine, please cite the following articles:
+
+.. code-block:: BiBTeX
+
+
+	@article{doi:10.1002/hbm.70148,
+		author = {Jaiswal, Amit and Nenonen, Jukka and Parkkonen, Lauri},
+		title = {Pseudo-MRI engine for MRI-free electromagnetic source imaging},
+		journal = {Human Brain Mapping},
+		volume = {46},
+		number = {2},
+		pages = {1–20},
+		year = {2025},
+		doi = {10.1002/hbm.70148},
+		URL = {https://doi.org/10.1002/hbm.70148},
+		eprint = {https://doi.org/10.1002/hbm.70148}
+	}  
+    
+    
 Contribution
 ============
 
