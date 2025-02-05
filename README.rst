@@ -141,7 +141,7 @@ Requirements
 
 
 Citing pseudo-MRI engine
-^^^^^^^^^^^^^^^^^^^^^^^^
+========================
 
 When using the pseudo-MRI engine, please cite the following articles:
 
