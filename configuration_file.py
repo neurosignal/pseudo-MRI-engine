@@ -13,6 +13,7 @@ from os import cpu_count, listdir, remove, unlink, symlink
 from os.path import exists, join, islink
 from glob2 import glob
 from mne.surface import read_surface
+from shutil import copyfile
 
 def check_set_input_config(args):
     # checks directories
@@ -34,7 +35,10 @@ def check_set_input_config(args):
     if args.fiducial_file in [None, '']:
         args.fiducial_file = args.def_fiducial_file.replace('.fif', f'{args.preauri_loc}.fif')
     print(f'\nUsing {args.fiducial_file} as the template MRI fiducial.\n')
-    symlink(args.fiducial_file, args.def_fiducial_file)
+    # try:
+    #     symlink(args.fiducial_file, args.def_fiducial_file)
+    # except OSError:
+    copyfile(args.fiducial_file, args.def_fiducial_file)
     print(args.template_MRI_dir, args.template_MRI_name, '\n')
 
     args.n_jobs            = cpu_count()-1  if not hasattr(args, 'n_jobs')             else int(args.n_jobs)    
