@@ -1,0 +1,1 @@
+mri_watershed -T1 -brain_atlas /home/neurosign/Softwares/FreeSurf/fs741/freesurfer/average/RB_all_withskull_2020_01_02.gca transforms/talairach_with_skull.lta -atlas T1.mgz brainmask.auto.mgz

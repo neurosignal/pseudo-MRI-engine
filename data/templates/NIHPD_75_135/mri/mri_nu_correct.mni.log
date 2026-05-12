@@ -1,0 +1,108 @@
+/home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri
+/home/neurosign/Softwares/FreeSurf/fs741/freesurfer/bin/mri_nu_correct.mni
+--i orig.mgz --o nu.mgz --uchar transforms/talairach.xfm --cm --n 2 --ants-n4
+nIters 2
+mri_nu_correct.mni 7.4.1
+Linux neurosignal 6.17.0-23-generic #23~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue Apr 14 16:11:48 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+Mon May 11 00:13:16 EEST 2026
+tmpdir is ./tmp.mri_nu_correct.mni.460364
+cd /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri
+AntsN4BiasFieldCorrectionFs -i orig.mgz -o ./tmp.mri_nu_correct.mni.460364/nu0.mgz --dtype uchar
+AntsN4BiasFieldCorrectionFs done
+mri_binarize --i ./tmp.mri_nu_correct.mni.460364/nu0.mgz --min -1 --o ./tmp.mri_nu_correct.mni.460364/ones.mgz
+
+7.4.1
+cwd /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri
+cmdline mri_binarize --i ./tmp.mri_nu_correct.mni.460364/nu0.mgz --min -1 --o ./tmp.mri_nu_correct.mni.460364/ones.mgz 
+sysname  Linux
+hostname neurosignal
+machine  x86_64
+user     neurosign
+
+input      ./tmp.mri_nu_correct.mni.460364/nu0.mgz
+frame      0
+nErode3d   0
+nErode2d   0
+output     ./tmp.mri_nu_correct.mni.460364/ones.mgz
+Binarizing based on threshold
+min        -1
+max        +infinity
+binval        1
+binvalnot     0
+fstart = 0, fend = 0, nframes = 1
+Starting parallel 1
+Found 16777216 values in range
+Counting number of voxels in first frame
+Found 16777215 voxels in final mask
+Writing output to ./tmp.mri_nu_correct.mni.460364/ones.mgz
+Count: 16777215 16777215.000000 16777216 99.999994
+mri_binarize done
+mri_segstats --id 1 --seg ./tmp.mri_nu_correct.mni.460364/ones.mgz --i orig.mgz --sum ./tmp.mri_nu_correct.mni.460364/sum.junk --avgwf ./tmp.mri_nu_correct.mni.460364/input.mean.dat
+
+7.4.1
+cwd 
+cmdline mri_segstats --id 1 --seg ./tmp.mri_nu_correct.mni.460364/ones.mgz --i orig.mgz --sum ./tmp.mri_nu_correct.mni.460364/sum.junk --avgwf ./tmp.mri_nu_correct.mni.460364/input.mean.dat 
+sysname  Linux
+hostname neurosignal
+machine  x86_64
+user     neurosign
+whitesurfname  white
+UseRobust  0
+Loading ./tmp.mri_nu_correct.mni.460364/ones.mgz
+Loading orig.mgz
+Voxel Volume is 1 mm^3
+Generating list of segmentation ids
+Found   1 segmentations
+Computing statistics for each segmentation
+
+Reporting on   1 segmentations
+Using PrintSegStat
+Computing spatial average of each frame
+
+Writing to ./tmp.mri_nu_correct.mni.460364/input.mean.dat
+mri_segstats done
+mri_segstats --id 1 --seg ./tmp.mri_nu_correct.mni.460364/ones.mgz --i ./tmp.mri_nu_correct.mni.460364/nu0.mgz --sum ./tmp.mri_nu_correct.mni.460364/sum.junk --avgwf ./tmp.mri_nu_correct.mni.460364/output.mean.dat
+
+7.4.1
+cwd 
+cmdline mri_segstats --id 1 --seg ./tmp.mri_nu_correct.mni.460364/ones.mgz --i ./tmp.mri_nu_correct.mni.460364/nu0.mgz --sum ./tmp.mri_nu_correct.mni.460364/sum.junk --avgwf ./tmp.mri_nu_correct.mni.460364/output.mean.dat 
+sysname  Linux
+hostname neurosignal
+machine  x86_64
+user     neurosign
+whitesurfname  white
+UseRobust  0
+Loading ./tmp.mri_nu_correct.mni.460364/ones.mgz
+Loading ./tmp.mri_nu_correct.mni.460364/nu0.mgz
+Voxel Volume is 1 mm^3
+Generating list of segmentation ids
+Found   1 segmentations
+Computing statistics for each segmentation
+
+Reporting on   1 segmentations
+Using PrintSegStat
+Computing spatial average of each frame
+
+Writing to ./tmp.mri_nu_correct.mni.460364/output.mean.dat
+mri_segstats done
+mris_calc -o ./tmp.mri_nu_correct.mni.460364/nu0.mgz ./tmp.mri_nu_correct.mni.460364/nu0.mgz mul 1.20926779545877566161
+mri_convert ./tmp.mri_nu_correct.mni.460364/nu0.mgz nu.mgz --like orig.mgz
+mri_convert ./tmp.mri_nu_correct.mni.460364/nu0.mgz nu.mgz --like orig.mgz 
+reading from ./tmp.mri_nu_correct.mni.460364/nu0.mgz...
+TR=0.00, TE=0.00, TI=0.00, flip angle=0.00
+i_ras = (-1, 0, 0)
+j_ras = (0, 0, -1)
+k_ras = (0, 1, 0)
+INFO: transform src into the like-volume: orig.mgz
+writing to nu.mgz...
+mri_make_uchar nu.mgz transforms/talairach.xfm nu.mgz
+type change took 0 minutes and 3 seconds.
+FIRST_PERCENTILE 0.010000
+WM_PERCENTILE    0.900000
+MAX_R 50.000000
+i1 = 18, i2 = 94
+#mri_make_uchar# mapping 46 242 to  3 110  :  b -22.8987 m 0.548893 : thresh 41.7179 maxsat 506.289 : nzero 13207050 nsat 0
+ 
+ 
+Mon May 11 00:15:48 EEST 2026
+mri_nu_correct.mni done

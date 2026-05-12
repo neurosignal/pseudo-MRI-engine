@@ -1,0 +1,118 @@
+# auto-generated config file
+# recon-all version: 7.4.1 (freesurfer-linux-ubuntu22_x86_64-7.4.1-20230614-7eb8460)
+
+GCA:
+    value: RB_all_2020-01-02.gca
+    flags: -gca
+    descr: Gaussian Classifier Array atlas used for segmentation
+
+GCASkull:
+    value: RB_all_withskull_2020_01_02.gca
+    flags: -gca-skull
+    descr: Gaussian Classifier Array atlas used for skull stripping
+
+DoAntsN3:
+    value: False
+    flags: -ants-n3
+    action: enable
+    descr: Use ANTS N3BiasFieldCorrection instead of MNI N3
+
+DoAntsN4:
+    value: True
+    flags: -no-ants-n4
+    action: disable
+    descr: Do not use ANTS N4BiasFieldCorrection instead of MNI N3
+
+DoAntsDenoising:
+    value: True
+    flags: -no-ants-denoise
+    action: disable
+    descr: Do not use ANTS DenoiseImage before mri_segment
+
+DoRemesh:
+    value: True
+    flags: -no-remesh
+    action: disable
+    descr: Do not use Martin's code to remesh ?h.orig to improve triangle quality after topo fix
+
+DoDecimation:
+    value: False
+    flags: -decimate
+    action: enable
+    descr: Allow decimation of surface ?h.orig.nofix, good for high res
+
+DecimationFaceArea:
+    value: 0.5
+    flags: -decimation-area
+    descr: Desired area (mm2) of a face after decimation
+
+RipWMSA:
+    value: False
+    flags: -rip-wmsa
+    action: enable
+    descr: Allow ripping/freezing of WMSA (77, 78, 79) voxels when placing white surface
+
+RipLesion:
+    value: False
+    flags: -rip-lesion
+    action: enable
+    descr: Allow ripping/freezing of Lesion-labeled (25, 57) voxels when placing white surface
+
+CBVfindFirstPeakD1:
+    value: False
+    flags: -first-peak-d1
+    action: enable
+    descr: Refinement of target surf location in MRIScomputeBorderValues with first derivative (d1)
+
+DefectsCortex:
+    value: True
+    flags: -no-defects-cortex
+    action: disable
+    descr: Limits defects to cortex when running defects2seg, ie, remove from medial wall (visualization only)
+
+UseSamseg:
+    value: False
+    flags: -samseg
+    action: enable
+    descr: Run samseg and samseg2recon (t1 and cross only)
+
+UseSynthSeg:
+    value: False
+    flags: -synthseg
+    action: enable
+    descr: Run synthseg instead of ca_reg and ca_label (won't create m3z)
+
+TopoFitLevel:
+    value: 0
+    flags: -topofit
+    descr: TopoFit Level
+
+SynthStrip:
+    value: False
+    flags: -synthstrip
+    action: enable
+    descr: Run synthstrip instead of mri_watershed
+
+LongTransferBaseBFS:
+    value: False
+    flags: -transfer-base-bfs
+    action: enable
+    descr: Transfer brain.finalsurfs (BFS) edits to long from the base rather than from the cross
+
+UseStopMaskSCM:
+    value: False
+    flags: -stopmask-scm
+    action: enable
+    descr: Use stop mask when creating white.preaparc and white surfaces
+
+FixEntoWM:
+    value: False
+    flags: -fix-ento-wm
+    action: enable
+    descr: Fix the WM in the area around entorhinal cortex and gyrus ambiens
+
+CblumFromSynthSeg:
+    value: False
+    flags: -cblum-from-synthseg
+    action: enable
+    descr: Run mri_synthseg and insert the cerebellum wm and gm into the aseg

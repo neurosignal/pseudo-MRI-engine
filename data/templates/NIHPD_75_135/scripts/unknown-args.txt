@@ -1,0 +1,11 @@
+-subject
+NIHPD_75_135
+-T2
+/home/neurosign/Downloads/nihpd_asym_07.5-13.5_nifti/nihpd_asym_07.5-13.5_t2w.nii
+-T2pial
+-hires
+-wsatlas
+-noskullstrip
+-threads
+8
+-all

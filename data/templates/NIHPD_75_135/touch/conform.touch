@@ -1,0 +1,1 @@
+mri_convert /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/rawavg.mgz /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/orig.mgz --conform_min

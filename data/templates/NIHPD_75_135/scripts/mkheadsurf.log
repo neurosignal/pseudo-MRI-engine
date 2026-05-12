@@ -1,0 +1,101 @@
+Log file for mkheadsurf
+Mon May 11 02:11:48 PM EEST 2026
+/home/neurosign/pCloudDrive/Scripts
+/home/neurosign/Softwares/FreeSurf/fs741/freesurfer/bin/mkheadsurf
+-subjid NIHPD_75_135 -srcvol T1.mgz -thresh1 20 -thresh2 20
+--------------------------------
+Mon May 11 02:11:48 PM EEST 2026
+/home/neurosign/pCloudDrive/Scripts
+mri_seghead --invol /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/T1.mgz --outvol /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/seghead.mgz --fill 1 --thresh1 20 --thresh2 20 --nhitsmin 2 --rescale --fill-holes-islands
+--------------------------------
+input volume:  /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/T1.mgz
+output volume: /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/seghead.mgz
+threshold1:    20
+threshold2:    20
+nhitsmin:      2
+fill value:    1
+Loading input volume
+Changing type, rescale = 1, fhi=0.999
+Filling Columns
+Filling Rows
+Filling Slices
+Merging
+nhits = 3211851
+Removing islands
+MRIremoveVolumeIslands() thresh=0.5, nKeep=1, nclusters = 2
+Removing Volume Holes
+MRIremoveVolumeHoles() thresh=0.5, nKeep=1
+MRIremoveVolumeIslands() thresh=0.5, nKeep=1, nclusters = 1
+Filling axial Slice Holes
+ostr LIA
+slicedir 6 slicediruse 2
+slicedim 256 1 256
+MRIremoveSliceHodes() removed 24111 voxels
+Filling sag Slice Holes
+ostr LIA
+slicedir 4 slicediruse 1
+slicedim 1 256 256
+MRIremoveSliceHodes() removed 455 voxels
+Filling cor Slice Holes
+slicedir 2 slicediruse 2
+slicedim 256 1 256
+MRIremoveSliceHodes() removed 0 voxels
+Counting
+N Head Voxels = 3236409
+N Back Voxels = 13540807
+Avg. Back Intensity = 0.717653
+Max. Back Intensity = 117.000000
+Writing output
+Done
+--------------------------------
+Mon May 11 02:12:08 PM EEST 2026
+/home/neurosign/pCloudDrive/Scripts
+mri_mc /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/seghead.mgz 1 /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/lh.seghead
+--------------------------------
+
+preprocessing...done
+starting generation of surface...
+   slice nb 40...
+   slice nb 50...
+   slice nb 60...
+   slice nb 70...
+   slice nb 80...
+   slice nb 90...
+   slice nb 100...
+   slice nb 110...
+   slice nb 120...
+   slice nb 130...
+   slice nb 140...
+   slice nb 150...
+   slice nb 160...
+   slice nb 170...
+   slice nb 180...
+   slice nb 190...
+   slice nb 200...
+   slice nb 210...
+   slice nb 220...
+   slice nb 230...
+constructing final surface...
+(surface with 313308 faces and 156656 vertices)...done
+computing the maximum edge length...1.414214 mm
+reversing orientation of faces...
+checking orientation of surface...
+0.000 % of the vertices (0 vertices) exhibit an orientation change
+
+counting number of connected components...
+   156656 voxel in cpt #1: X=2 [v=156656,e=469962,f=313308] located at (-0.448875, 1.933976, -19.256083)
+For the whole surface: X=2 [v=156656,e=469962,f=313308]
+One single component has been found
+nothing to do
+writing out surface...done
+--------------------------------
+Mon May 11 02:12:10 PM EEST 2026
+/home/neurosign/pCloudDrive/Scripts
+mris_smooth -n 10 -nw /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/lh.seghead /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/lh.seghead
+--------------------------------
+smoothing for 10 iterations
+smoothing surface tessellation for 10 iterations...
+smoothing complete - recomputing first and second fundamental forms...
+Started at: Mon May 11 02:11:48 PM EEST 2026
+Ended   at: Mon May 11 02:12:12 PM EEST 2026
+mkheadsurf done

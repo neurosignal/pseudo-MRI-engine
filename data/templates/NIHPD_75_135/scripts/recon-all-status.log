@@ -1,0 +1,83 @@
+status file for recon-all
+Mon May 11 00:10:18 EEST 2026
+#@# T2/FLAIR Input Mon May 11 00:10:18 EEST 2026
+#@# MotionCor Mon May 11 00:10:19 EEST 2026
+#@# Talairach Mon May 11 00:10:23 EEST 2026
+#@# Talairach Failure Detection Mon May 11 00:13:16 EEST 2026
+#@# Nu Intensity Correction Mon May 11 00:13:16 EEST 2026
+#@# Intensity Normalization Mon May 11 00:15:48 EEST 2026
+#@# Skull Stripping Mon May 11 00:16:43 EEST 2026
+#@# EM Registration Mon May 11 00:18:25 EEST 2026
+#@# CA Normalize Mon May 11 00:19:59 EEST 2026
+#@# CA Reg Mon May 11 00:20:34 EEST 2026
+#@# SubCort Seg Mon May 11 07:24:13 EEST 2026
+#@# CC Seg Mon May 11 10:56:44 EEST 2026
+#@# Merge ASeg Mon May 11 10:57:03 EEST 2026
+#@# Intensity Normalization2 Mon May 11 10:57:03 EEST 2026
+#@# Mask BFS Mon May 11 10:58:33 EEST 2026
+#@# WM Segmentation Mon May 11 10:58:34 EEST 2026
+#@# Fill Mon May 11 11:00:28 EEST 2026
+#@# Tessellate lh Mon May 11 11:01:15 EEST 2026
+#@# Tessellate rh Mon May 11 11:01:25 EEST 2026
+#@# Smooth1 lh Mon May 11 11:01:35 EEST 2026
+#@# Smooth1 rh Mon May 11 11:01:37 EEST 2026
+#@# Inflation1 lh Mon May 11 11:01:39 EEST 2026
+#@# Inflation1 rh Mon May 11 11:01:50 EEST 2026
+#@# QSphere lh Mon May 11 11:02:01 EEST 2026
+#@# QSphere rh Mon May 11 11:03:17 EEST 2026
+#@# Fix Topology lh Mon May 11 11:04:32 EEST 2026
+#@# Fix Topology rh Mon May 11 11:05:20 EEST 2026
+#@# Smooth2 lh Mon May 11 11:12:57 EEST 2026
+#@# Smooth2 rh Mon May 11 11:13:00 EEST 2026
+#@# Inflation2 lh Mon May 11 11:13:02 EEST 2026
+#@# Inflation2 rh Mon May 11 11:13:14 EEST 2026
+#@# Curv .H and .K lh Mon May 11 11:13:26 EEST 2026
+#@# Curv .H and .K rh Mon May 11 11:14:09 EEST 2026
+#@# Sphere lh Mon May 11 11:14:52 EEST 2026
+#@# Sphere rh Mon May 11 11:17:02 EEST 2026
+#@# Surf Reg lh Mon May 11 11:19:15 EEST 2026
+#@# Surf Reg rh Mon May 11 11:22:36 EEST 2026
+#@# Jacobian white lh Mon May 11 11:25:49 EEST 2026
+#@# Jacobian white rh Mon May 11 11:25:49 EEST 2026
+#@# AvgCurv lh Mon May 11 11:25:50 EEST 2026
+#@# AvgCurv rh Mon May 11 11:25:51 EEST 2026
+#@# Cortical Parc lh Mon May 11 11:25:52 EEST 2026
+#@# Cortical Parc rh Mon May 11 11:26:00 EEST 2026
+#@# Refine Pial Surfs w/ T2/FLAIR Mon May 11 11:36:39 EEST 2026
+#@# white curv lh Mon May 11 11:56:50 EEST 2026
+#@# white area lh Mon May 11 11:56:51 EEST 2026
+#@# pial curv lh Mon May 11 11:56:52 EEST 2026
+#@# pial area lh Mon May 11 11:56:53 EEST 2026
+#@# thickness lh Mon May 11 11:56:54 EEST 2026
+#@# area and vertex vol lh Mon May 11 11:57:47 EEST 2026
+#@# white curv rh Mon May 11 11:57:48 EEST 2026
+#@# white area rh Mon May 11 11:57:50 EEST 2026
+#@# pial curv rh Mon May 11 11:57:50 EEST 2026
+#@# pial area rh Mon May 11 11:57:52 EEST 2026
+#@# thickness rh Mon May 11 11:57:52 EEST 2026
+#@# area and vertex vol rh Mon May 11 11:58:23 EEST 2026
+#@# Curvature Stats lh Mon May 11 11:58:24 EEST 2026
+#@# Curvature Stats rh Mon May 11 11:58:26 EEST 2026
+#@# Cortical ribbon mask Mon May 11 11:58:27 EEST 2026
+#@# Cortical Parc 2 lh Mon May 11 12:05:32 EEST 2026
+#@# Cortical Parc 2 rh Mon May 11 12:05:43 EEST 2026
+#@# Cortical Parc 3 lh Mon May 11 12:05:55 EEST 2026
+#@# Cortical Parc 3 rh Mon May 11 12:06:03 EEST 2026
+#@# WM/GM Contrast lh Mon May 11 12:06:12 EEST 2026
+#@# WM/GM Contrast rh Mon May 11 12:06:15 EEST 2026
+#@# Relabel Hypointensities Mon May 11 12:06:18 EEST 2026
+#@# APas-to-ASeg Mon May 11 12:06:32 EEST 2026
+#@# AParc-to-ASeg aparc Mon May 11 12:06:40 EEST 2026
+#@# AParc-to-ASeg aparc.a2009s Mon May 11 12:07:36 EEST 2026
+#@# AParc-to-ASeg aparc.DKTatlas Mon May 11 12:08:33 EEST 2026
+#@# WMParc Mon May 11 12:09:34 EEST 2026
+#@# Parcellation Stats lh Mon May 11 12:13:13 EEST 2026
+#@# Parcellation Stats rh Mon May 11 12:13:34 EEST 2026
+#@# Parcellation Stats 2 lh Mon May 11 12:13:57 EEST 2026
+#@# Parcellation Stats 2 rh Mon May 11 12:14:08 EEST 2026
+#@# Parcellation Stats 3 lh Mon May 11 12:14:19 EEST 2026
+#@# Parcellation Stats 3 rh Mon May 11 12:14:30 EEST 2026
+#@# ASeg Stats Mon May 11 12:14:41 EEST 2026
+#@# BA_exvivo Labels lh Mon May 11 12:15:22 EEST 2026
+#@# BA_exvivo Labels rh Mon May 11 12:18:12 EEST 2026
+recon-all -s NIHPD_75_135 finished without error at Mon May 11 12:21:09 EEST 2026

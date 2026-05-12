@@ -1,0 +1,13 @@
+------------------------------
+SUBJECT NIHPD_75_135
+START_TIME Mon May 11 00:10:17 EEST 2026
+END_TIME Mon May 11 12:21:09 EEST 2026
+RUNTIME_HOURS 12.181
+USER neurosign
+HOST neurosignal
+PROCESSOR x86_64
+OS Linux
+UNAME Linux neurosignal 6.17.0-23-generic #23~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue Apr 14 16:11:48 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+VERSION 7.4.1 (freesurfer-linux-ubuntu22_x86_64-7.4.1-20230614-7eb8460)
+CMDPATH /home/neurosign/Softwares/FreeSurf/fs741/freesurfer/bin/recon-all
+CMDARGS -subject NIHPD_75_135 -T2 /home/neurosign/Downloads/nihpd_asym_07.5-13.5_nifti/nihpd_asym_07.5-13.5_t2w.nii -T2pial -hires -wsatlas -noskullstrip -threads 8 -all

@@ -1,0 +1,7 @@
+# AZS
+# compute_vox2vox talsrcimg talsrcimg_to_711-2C_as_mni_average_305_t4 /home/neurosign/Softwares/FreeSurf/fs741/freesurfer/average/711-2C_as_mni_average_305
+# freesurfer compute_vox2vox.c
+  1.033388  0.010881  0.003419   -4.9582
+ -0.005160  1.074269  0.025242   10.0650
+ -0.002883  0.041221  1.027988   11.0835
+  0.000000  0.000000  0.000000    1.0000

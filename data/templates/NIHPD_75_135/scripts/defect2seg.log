@@ -1,0 +1,71 @@
+Log file for defect2seg
+Mon May 11 11:05:53 EEST 2026
+
+setenv SUBJECTS_DIR /home/neurosign/FS_SUBS_DIR/fs741
+cd /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/scripts
+/home/neurosign/Softwares/FreeSurf/fs741/freesurfer/bin/defect2seg --s NIHPD_75_135 --cortex
+
+freesurfer-linux-ubuntu22_x86_64-7.4.1-20230614-7eb8460
+defect2seg 7.4.1
+Linux neurosignal 6.17.0-23-generic #23~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue Apr 14 16:11:48 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+pid 508490
+mri_label2label --label-cortex /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/lh.orig.nofix /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/aseg.presurf.mgz 0 /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/label/lh.nofix.cortex.label
+
+ Generating cortex label... RemoveHipAmgy=0
+ NucAccIsMedialWall=0
+ mris->useRealRAS=0
+7 non-cortical segments detected
+only using segment with 8767 vertices
+erasing segment 1 (vno[0] = 97350)
+erasing segment 2 (vno[0] = 102734)
+erasing segment 3 (vno[0] = 102758)
+erasing segment 4 (vno[0] = 102880)
+erasing segment 5 (vno[0] = 103786)
+erasing segment 6 (vno[0] = 108233)
+mri_label2vol --defects /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/lh.orig.nofix /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/lh.defect_labels /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/orig.mgz 1000 0 /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/surface.defects.mgz /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/label/lh.nofix.cortex.label
+mri_label2vol supposed to be reproducible but seed not set
+Contraining to label /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/label/lh.nofix.cortex.label
+Changing input type 0 to MRI_INT
+Converting defects to volume: offset=1000, merge=0
+Writing to /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/surface.defects.mgz
+mris_defects_pointset -s /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/lh.orig.nofix -d /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/lh.defect_labels -o /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/lh.defects.pointset --label /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/label/lh.nofix.cortex.label
+Reading in surface /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/lh.orig.nofix
+Reading in defect segmentation /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/lh.defect_labels
+Reading in label /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/label/lh.nofix.cortex.label
+#VMPC# mris_defects_pointset 1113808
+mris_defects_pointset done
+mri_label2label --label-cortex /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/rh.orig.nofix /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/aseg.presurf.mgz 0 /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/label/rh.nofix.cortex.label
+
+ Generating cortex label... RemoveHipAmgy=0
+ NucAccIsMedialWall=0
+ mris->useRealRAS=0
+10 non-cortical segments detected
+only using segment with 8730 vertices
+erasing segment 0 (vno[0] = 12207)
+erasing segment 1 (vno[0] = 15467)
+erasing segment 3 (vno[0] = 84832)
+erasing segment 4 (vno[0] = 97636)
+erasing segment 5 (vno[0] = 99927)
+erasing segment 6 (vno[0] = 100042)
+erasing segment 7 (vno[0] = 101692)
+erasing segment 8 (vno[0] = 102819)
+erasing segment 9 (vno[0] = 106495)
+mri_label2vol --defects /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/rh.orig.nofix /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/rh.defect_labels /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/surface.defects.mgz 2000 1 /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/surface.defects.mgz /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/label/rh.nofix.cortex.label
+mri_label2vol supposed to be reproducible but seed not set
+Contraining to label /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/label/rh.nofix.cortex.label
+Converting defects to volume: offset=2000, merge=1
+Writing to /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/surface.defects.mgz
+mris_defects_pointset -s /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/rh.orig.nofix -d /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/rh.defect_labels -o /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/rh.defects.pointset --label /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/label/rh.nofix.cortex.label
+Reading in surface /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/rh.orig.nofix
+Reading in defect segmentation /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/surf/rh.defect_labels
+Reading in label /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/label/rh.nofix.cortex.label
+#VMPC# mris_defects_pointset 1114060
+mris_defects_pointset done
+ 
+Started at Mon May 11 11:05:53 EEST 2026 
+Ended   at Mon May 11 11:06:13 EEST 2026
+Defect2seg-Run-Time-Sec 20
+Defect2seg-Run-Time-Min 0.40
+Defect2seg-Run-Time-Hours 0.01
+ 
+defect2seg Done

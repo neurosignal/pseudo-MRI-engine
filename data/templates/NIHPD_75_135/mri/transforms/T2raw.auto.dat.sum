@@ -1,0 +1,96 @@
+7.4.1
+setenv SUBJECTS_DIR /home/neurosign/FS_SUBS_DIR/fs741
+cd /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/scripts
+mri_segreg --mov /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/transforms/tmp.bbregister.527449/template.nii --init-reg /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/transforms/tmp.bbregister.527449/bbr.pass1.dat --out-reg /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/transforms/T2raw.auto.dat --interp trilinear --wm-proj-abs 1 --tol 1e-8 --tol1d 1e-3 --c0 0 --mincost /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/transforms/T2raw.auto.dat.mincost --dof 6 --nmax 36 --param /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/transforms/T2raw.auto.dat.param --surf white --brute -0.1 0.1 0.1 --cur-reg /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/transforms/tmp.bbregister.527449/reg.curopt.dat --gm-proj-abs 2 --nsub 1 --gm-gt-wm 0.5 
+sysname  Linux
+hostname neurosignal
+machine  x86_64
+user     neurosign
+movvol /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/transforms/tmp.bbregister.527449/template.nii
+regfile /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/transforms/tmp.bbregister.527449/bbr.pass1.dat
+subject NIHPD_75_135
+dof 6
+outregfile /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/mri/transforms/T2raw.auto.dat
+UseMask 0
+UseLH 1
+UseRH 1
+nsubsamp 1
+PenaltySign  -1
+PenaltySlope 0.500000
+PenaltyCenter 0.000000
+surfname white
+GMProjAbs 2.000000
+WMProjAbs 1.000000
+lhcostfile (null)
+rhcostfile (null)
+interp  trilinear (1)
+frame  0
+TolPowell 0.000000
+nMaxItersPowell 36
+n1dmin  3
+Profile   0
+Gdiag_no  -1
+AddNoise  0 (0)
+SynthSeed 1778554848
+TransRandMax 0.000000
+RotRandMax 0.000000
+Translations 0.000000 0.000000 0.000000
+Rotations   0.000000 0.000000 0.000000
+Input reg
+-1.00000  -0.00294  -0.00088   0.09969;
+-0.00087  -0.00363   0.99999   0.35875;
+ 0.00294  -0.99999  -0.00363  -0.32977;
+ 0.00000   0.00000   0.00000   1.00000;
+
+Initial costs ----------------
+Number of surface hits 294946
+WM  Intensity0    58.8989 +/-   5.5379
+Ctx Intensity0    73.5928 +/-   4.9223
+Pct Contrast0     22.3340 +/-   9.7646
+Cost   0.0125
+RelCost   0.0125
+
+Brute force preopt -0.1 0.1 0.1, n = 729
+     0  -0.1000  -0.1000  -0.1000  -0.1000  -0.1000  -0.1000      0.0136   0.0136  0.0
+     1  -0.1000  -0.1000  -0.1000  -0.1000  -0.1000   0.0000      0.0130   0.0130  0.0
+     2  -0.1000  -0.1000  -0.1000  -0.1000  -0.1000   0.1000      0.0125   0.0125  0.0
+     3  -0.1000  -0.1000  -0.1000  -0.1000   0.0000  -0.1000      0.0124   0.0124  0.0
+     4  -0.1000  -0.1000  -0.1000  -0.1000   0.0000   0.0000      0.0124   0.0124  0.0
+     5  -0.1000  -0.1000  -0.1000  -0.1000   0.0000   0.1000      0.0123   0.0123  0.0
+     6  -0.1000  -0.1000  -0.1000  -0.1000   0.1000  -0.1000      0.0123   0.0123  0.0
+
+Final costs ----------------
+Number of surface hits 294946
+WM  Intensity0    58.8168 +/-   5.4813
+Ctx Intensity0    73.6298 +/-   4.8635
+Pct Contrast0     22.5180 +/-   9.7686
+Cost   0.0122
+RelCost   0.0125
+Number of iterations     9
+Min cost was 0.012166
+RelMinCost   0.0122
+Number of FunctionCalls   697
+OptimizationTime 32.071082 sec
+Parameters at optimum (transmm, rotdeg)
+-0.05169 -0.07666  0.02067  0.12962 -0.11127  0.09997 
+Number of surface hits 294946
+WM  Intensity    58.8168 +/-   5.4813
+Ctx Intensity    73.6298 +/-   4.8635
+Pct Contrast     22.5180 +/-   9.7686
+Cost at optimum   0.0122
+RelCostOptimum   0.0122
+nhits= 294946 wmmn=   58.8168 wmstd=  5.4813 constd=    9.7686 ctxmn=   73.6298 ctxstd=  4.8635 conmn =  22.5180 costmn =   0.0122 
+#C#  -0.052  -0.077   0.021  0.130 -0.111  0.100 0.000000 0.000000 0.012166 58.816817 73.629808 22.518008 0.000000 0.500000     1 0
+Reg at min cost was 
+-1.00000  -0.00099  -0.00263   0.04801;
+-0.00263  -0.00137   1.00000   0.28301;
+ 0.00100  -1.00000  -0.00137  -0.30809;
+ 0.00000   0.00000   0.00000   1.00000;
+
+Original Reg - Optimal Reg
+ 0.00000  -0.00194   0.00174   0.05168;
+ 0.00175  -0.00226  -0.00000   0.07574;
+ 0.00194   0.00001  -0.00226  -0.02168;
+ 0.00000   0.00000   0.00000   0.00000;
+
+Surface-RMS-Diff-mm 0.181968 0.078301 0.360222

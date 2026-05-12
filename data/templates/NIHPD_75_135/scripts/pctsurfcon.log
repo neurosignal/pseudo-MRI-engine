@@ -1,0 +1,9 @@
+Logfile for pctsurfcon
+Mon May 11 12:06:15 EEST 2026
+setenv SUBJECTS_DIR /home/neurosign/FS_SUBS_DIR/fs741
+cd /home/neurosign/FS_SUBS_DIR/fs741/NIHPD_75_135/scripts
+/home/neurosign/Softwares/FreeSurf/fs741/freesurfer/bin/pctsurfcon
+pctsurfcon 7.4.1
+Linux neurosignal 6.17.0-23-generic #23~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue Apr 14 16:11:48 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+FREESURFER_HOME /home/neurosign/Softwares/FreeSurf/fs741/freesurfer
+Cleaning up
